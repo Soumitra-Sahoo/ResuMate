@@ -552,7 +552,7 @@ const uploadResumeImages = async (retryCount = 0) => {
         formData.append("thumbnail", thumbnailFile)
 
         // Upload with timeout
-        const uploadResponse = await axiosInstance.put(
+        const uploadResponse = await axiosInstance.post(
             API_PATHS.RESUME.UPLOAD_IMAGES(resumeId),
             formData,
             {

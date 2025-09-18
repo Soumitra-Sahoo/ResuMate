@@ -1,4 +1,4 @@
-export const BASE_URL = 'http://localhost:4000'
+export const BASE_URL = 'https://resumate-jet-rho.vercel.app'
 
 //ROUTES USER FOR FRONTEND
 export const API_PATHS = {
@@ -16,6 +16,6 @@ export const API_PATHS = {
         UPLOAD_IMAGES: (id) => `/api/resume/${id}/upload-images`,
     },
     image: {
-        UPLOAD_IMAGE: 'api/auth/upload-image'
+        UPLOAD_IMAGE: '/api/auth/upload-image'
     }
 }

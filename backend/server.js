@@ -26,7 +26,7 @@ app.use('/api/resume', resumeRoutes)
 
 app.use('/uploads', express.static(path.join(__dirname, '/uploads'),{
     setHeaders: (res, path) => {
-        res.set('Access-Control-Allow_Origin', 'http://localhost:5173');
+        res.set('Access-Control-Allow_Origin', 'https://resumate-eight-chi.vercel.app');
     }
 })
 );
@@ -36,6 +36,10 @@ app.get('/', (req, res) => {
     res.send('Hello from backend')
 })
 
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-});
+
+    app.listen(PORT, () => {
+        console.log(`Server is running on http://localhost:${PORT}`);
+    });
+
+export default app;
+
