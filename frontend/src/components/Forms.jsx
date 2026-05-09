@@ -189,7 +189,7 @@ export const ContactInfoForm = ({ contactInfo, updateSection }) => {
 
         <Input
           label="Email"
-          placeholder="john@example.com"
+          placeholder="example@mail.com"
           type="email"
           value={contactInfo.email || ""}
           onChange={({ target }) => updateSection("email", target.value)}
@@ -197,7 +197,7 @@ export const ContactInfoForm = ({ contactInfo, updateSection }) => {
 
         <Input
           label="Phone Number"
-          placeholder="1234567890"
+          placeholder="xxx xxx xxxx"
           value={contactInfo.phone || ""}
           onChange={({ target }) => updateSection("phone", target.value)}
         />
@@ -219,7 +219,7 @@ export const ContactInfoForm = ({ contactInfo, updateSection }) => {
         <div className="md:col-span-2">
           <Input
             label="Portfolio / Website"
-            placeholder="https://yourwebsite.com"
+            placeholder="https://yourwebsite.live"
             value={contactInfo.website || ""}
             onChange={({ target }) => updateSection("website", target.value)}
           />
@@ -309,14 +309,14 @@ export const ProfileInfoForm = ({ profileData, updateSection }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Input
             label="Full Name"
-            placeholder="John Doe"
+            placeholder="Your full name..."
             value={profileData.fullName || ""}
             onChange={({ target }) => updateSection("fullName", target.value)}
           />
 
           <Input
             label="Designation"
-            placeholder="Full Stack Developer"
+            placeholder="Your desired designation..."
             value={profileData.designation || ""}
             onChange={({ target }) => updateSection("designation", target.value)}
           />

@@ -19,8 +19,6 @@ export const landingPageStyles = {
   mobileAuthButton: "w-full px-6 py-3 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white font-bold rounded-2xl",
 
   // Mobile menu
-  // Mobile menu
-  // Mobile menu
   mobileMenu: "md:hidden bg-white/95 backdrop-blur-lg w-full fixed top-16 left-0 right-0 z-40 shadow-lg border-b border-violet-100/50 transition-all duration-300 ease-in-out",
   mobileMenuContainer: "max-w-6xl mx-auto px-4 sm:px-6 py-4 flex flex-col gap-4",
   mobileUserInfo: "flex flex-col gap-4 py-2",

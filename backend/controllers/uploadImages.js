@@ -8,7 +8,7 @@ import { error } from 'console'
 export const uploadResumeImages= async (req, res) =>{
     try {
         //Configure multer to handle images
-        upload.fields([{name: "thumbnail"}, {name: "profileImage"}])
+        upload.fields([{name: "thumbnail", maxCount: 1}, {name: "profileImage", maxCount: 1}])
         (req, res, async (err) => {
             if(err){
                 return res.status(400).json({message:"File upload failed", error:err.message})
