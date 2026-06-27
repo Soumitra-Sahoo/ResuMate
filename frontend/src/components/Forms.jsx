@@ -1,559 +1,322 @@
 "use client";
 
+import { useState } from "react";
 import { Input } from "./Input";
 import { RatingInput } from "./ResumeSection";
-import { Plus, Trash2 } from "lucide-react";
-import {
-  commonStyles,
-  additionalInfoStyles,
-  certificationInfoStyles,
-  contactInfoStyles,
-  educationDetailsStyles,
-  profileInfoStyles,
-  projectDetailStyles,
-  skillsInfoStyles,
-  workExperienceStyles
-} from "../assets/dummystyle";
+import { Plus, Trash2, Sparkles, Loader2 } from "lucide-react";
+import axiosInstance from "../utils/axiosInstance";
+import { API_PATHS } from "../utils/apiPaths";
+import toast from "react-hot-toast";
 
-// AdditionalInfoForm Component
-export const AdditionalInfoForm = ({ languages, interests, updateArrayItem, addArrayItem, removeArrayItem }) => {
-  return (
-    <div className={additionalInfoStyles.container}>
-      <h2 className={additionalInfoStyles.heading}>Additional Information</h2>
+const card = "bg-white border border-gray-100 rounded-2xl p-6 shadow-sm";
+const heading = "text-xl font-black text-slate-800 mb-6";
+const sectionLabel = "block text-sm font-bold text-slate-700 mb-3";
+const textarea = "w-full text-sm text-slate-700 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 outline-none resize-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 transition-all";
+const trashBtn = "flex items-center gap-2 text-xs font-bold text-red-500 hover:text-red-700 border border-red-200 hover:border-red-400 bg-red-50 hover:bg-red-100 px-3 py-2 rounded-xl transition-all";
+const addBtn = "flex items-center gap-2 text-sm font-bold px-5 py-2.5 rounded-xl border-2 border-dashed transition-all";
 
-      {/* Languages Section */}
-      <div className="mb-10">
-        <h3 className={additionalInfoStyles.sectionHeading}>
-          <div className={additionalInfoStyles.dotViolet}></div>
-          Languages
-        </h3>
-        <div className="space-y-6">
-          {languages?.map((lang, index) => (
-            <div key={index} className={additionalInfoStyles.languageItem}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-                <Input
-                  label="Language"
-                  placeholder="e.g. English"
-                  value={lang.name || ""}
-                  onChange={({ target }) => updateArrayItem("languages", index, "name", target.value)}
-                />
-                <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-4">Proficiency</label>
-                  <RatingInput
-                    value={lang.progress || 0}
-                    total={5}
-                    color="#8b5cf6"
-                    bgColor="#e2e8f0"
-                    onChange={(value) => updateArrayItem("languages", index, "progress", value)}
-                  />
+const AIImproveButton = ({ text, role, company, onImproved }) => {
+    const [loading, setLoading] = useState(false);
+
+    const handleImprove = async () => {
+        if (!text?.trim()) { toast.error("Write something in the description first"); return; }
+        setLoading(true);
+        const toastId = toast.loading("AI is improving your bullet point…");
+        try {
+            const res = await axiosInstance.post(API_PATHS.AI.IMPROVE_BULLET, { text, role, company });
+            onImproved(res.data.improved);
+            toast.success("Bullet point improved!", { id: toastId });
+        } catch {
+            toast.error("AI request failed. Try again.", { id: toastId });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <button type="button" onClick={handleImprove} disabled={loading}
+            className="flex items-center gap-2 text-xs font-bold px-3 py-1.5 bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white rounded-xl hover:scale-105 transition-all shadow-md disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100">
+            {loading ? <Loader2 size={13} className="animate-spin" /> : <Sparkles size={13} />}
+            {loading ? "Improving…" : "✨ Improve with AI"}
+        </button>
+    );
+};
+
+export const AdditionalInfoForm = ({ languages, interests, updateArrayItem, addArrayItem, removeArrayItem }) => (
+    <div className={card}>
+        <h2 className={heading}>Additional Information</h2>
+        <div className="mb-10">
+            <h3 className="flex items-center gap-2 text-base font-bold text-slate-700 mb-5">
+                <div className="w-2 h-2 rounded-full bg-violet-500" /> Languages
+            </h3>
+            <div className="space-y-6">
+                {languages?.map((lang, index) => (
+                    <div key={index} className="bg-gray-50 border border-gray-200 rounded-2xl p-5">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                            <Input label="Language" placeholder="e.g. English" value={lang.name || ""}
+                                onChange={({ target }) => updateArrayItem("languages", index, "name", target.value)} />
+                            <div>
+                                <label className={sectionLabel}>Proficiency</label>
+                                <RatingInput value={lang.progress || 0} total={5} color="#8b5cf6" bgColor="#e2e8f0"
+                                    onChange={(v) => updateArrayItem("languages", index, "progress", v)} />
+                            </div>
+                        </div>
+                        {languages.length > 1 && (
+                            <button type="button" className={`${trashBtn} mt-4`} onClick={() => removeArrayItem("languages", index)}>
+                                <Trash2 size={14} /> Remove
+                            </button>
+                        )}
+                    </div>
+                ))}
+                <button type="button" className={`${addBtn} border-violet-300 text-violet-600 hover:bg-violet-50 hover:border-violet-500`}
+                    onClick={() => addArrayItem("languages", { name: "", progress: 0 })}>
+                    <Plus size={16} /> Add Language
+                </button>
+            </div>
+        </div>
+        <div>
+            <h3 className="flex items-center gap-2 text-base font-bold text-slate-700 mb-5">
+                <div className="w-2 h-2 rounded-full bg-orange-400" /> Interests
+            </h3>
+            <div className="space-y-4">
+                {interests?.map((interest, index) => (
+                    <div key={index} className="flex items-center gap-3">
+                        <div className="flex-1">
+                            <Input placeholder="e.g. Reading, Photography" value={interest || ""}
+                                onChange={({ target }) => updateArrayItem("interests", index, null, target.value)} />
+                        </div>
+                        {interests.length > 1 && (
+                            <button type="button" className={trashBtn} onClick={() => removeArrayItem("interests", index)}>
+                                <Trash2 size={14} />
+                            </button>
+                        )}
+                    </div>
+                ))}
+                <button type="button" className={`${addBtn} border-orange-300 text-orange-600 hover:bg-orange-50 hover:border-orange-500`}
+                    onClick={() => addArrayItem("interests", "")}>
+                    <Plus size={16} /> Add Interest
+                </button>
+            </div>
+        </div>
+    </div>
+);
+
+export const CertificationInfoForm = ({ certifications, updateArrayItem, addArrayItem, removeArrayItem }) => (
+    <div className={card}>
+        <h2 className={heading}>Certifications</h2>
+        <div className="space-y-6 mb-6">
+            {certifications.map((cert, index) => (
+                <div key={index} className="bg-gray-50 border border-gray-200 rounded-2xl p-5">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <Input label="Certificate Title" placeholder="Full Stack Web Developer" value={cert.title || ""}
+                            onChange={({ target }) => updateArrayItem(index, "title", target.value)} />
+                        <Input label="Issuer" placeholder="Coursera / Google / etc." value={cert.issuer || ""}
+                            onChange={({ target }) => updateArrayItem(index, "issuer", target.value)} />
+                        <Input label="Year" placeholder="2024" value={cert.year || ""}
+                            onChange={({ target }) => updateArrayItem(index, "year", target.value)} />
+                    </div>
+                    {certifications.length > 1 && (
+                        <button type="button" className={`${trashBtn} mt-4`} onClick={() => removeArrayItem(index)}>
+                            <Trash2 size={14} /> Remove
+                        </button>
+                    )}
                 </div>
-              </div>
-              {languages.length > 1 && (
-                <button
-                  type="button"
-                  className={commonStyles.trashButton}
-                  onClick={() => removeArrayItem("languages", index)}
-                >
-                  <Trash2 size={16} />
-                </button>
-              )}
-            </div>
-          ))}
-
-          <button
-            type="button"
-            className={`${commonStyles.addButtonBase} ${additionalInfoStyles.addButtonLanguage}`}
-            onClick={() => addArrayItem("languages", { name: "", progress: 0 })}
-          >
-            <Plus size={16} /> Add Language
-          </button>
+            ))}
+            <button type="button" className={`${addBtn} border-blue-300 text-blue-600 hover:bg-blue-50 hover:border-blue-500`}
+                onClick={() => addArrayItem({ title: "", issuer: "", year: "" })}>
+                <Plus size={16} /> Add Certification
+            </button>
         </div>
-      </div>
-
-      {/* Interests Section */}
-      <div className="mb-6">
-        <h3 className={additionalInfoStyles.sectionHeading}>
-          <div className={additionalInfoStyles.dotOrange}></div>
-          Interests
-        </h3>
-        <div className="space-y-4">
-          {interests?.map((interest, index) => (
-            <div key={index} className={additionalInfoStyles.interestItem}>
-              <Input
-                placeholder="e.g. Reading, Photography"
-                value={interest || ""}
-                onChange={({ target }) => updateArrayItem("interests", index, null, target.value)}
-              />
-              {interests.length > 1 && (
-                <button
-                  type="button"
-                  className={commonStyles.trashButton}
-                  onClick={() => removeArrayItem("interests", index)}
-                >
-                  <Trash2 size={16} />
-                </button>
-              )}
-            </div>
-          ))}
-
-          <button
-            type="button"
-            className={`${commonStyles.addButtonBase} ${additionalInfoStyles.addButtonInterest}`}
-            onClick={() => addArrayItem("interests", "")}
-          >
-            <Plus size={16} /> Add Interest
-          </button>
-        </div>
-      </div>
     </div>
-  );
-};
+);
 
-// CertificationInfoForm Component
-export const CertificationInfoForm = ({ certifications, updateArrayItem, addArrayItem, removeArrayItem }) => {
-  return (
-    <div className={certificationInfoStyles.container}>
-      <h2 className={certificationInfoStyles.heading}>Certifications</h2>
-      <div className="space-y-6 mb-6">
-        {certifications.map((cert, index) => (
-          <div key={index} className={certificationInfoStyles.item}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Input
-                label="Certificate Title"
-                placeholder="Full Stack Web Developer"
-                value={cert.title || ""}
-                onChange={({ target }) => updateArrayItem(index, "title", target.value)}
-              />
-
-              <Input
-                label="Issuer"
-                placeholder="Coursera / Google / etc."
-                value={cert.issuer || ""}
-                onChange={({ target }) => updateArrayItem(index, "issuer", target.value)}
-              />
-
-              <Input
-                label="Year"
-                placeholder="2024"
-                value={cert.year || ""}
-                onChange={({ target }) => updateArrayItem(index, "year", target.value)}
-              />
-            </div>
-
-            {certifications.length > 1 && (
-              <button
-                type="button"
-                className={commonStyles.trashButton}
-                onClick={() => removeArrayItem(index)}
-              >
-                <Trash2 size={16} />
-              </button>
-            )}
-          </div>
-        ))}
-
-        <button
-          type="button"
-          className={`${commonStyles.addButtonBase} ${certificationInfoStyles.addButton}`}
-          onClick={() =>
-            addArrayItem({
-              title: "",
-              issuer: "",
-              year: "",
-            })
-          }
-        >
-          <Plus size={16} />
-          Add Certification
-        </button>
-      </div>
-    </div>
-  );
-};
-
-// ContactInfoForm Component
-export const ContactInfoForm = ({ contactInfo, updateSection }) => {
-  return (
-    <div className={contactInfoStyles.container}>
-      <h2 className={contactInfoStyles.heading}>Contact Information</h2>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="md:col-span-2">
-          <Input
-            label="Address"
-            placeholder="Short Address"
-            value={contactInfo.location || ""}
-            onChange={({ target }) => updateSection("location", target.value)}
-          />
-        </div>
-
-        <Input
-          label="Email"
-          placeholder="example@mail.com"
-          type="email"
-          value={contactInfo.email || ""}
-          onChange={({ target }) => updateSection("email", target.value)}
-        />
-
-        <Input
-          label="Phone Number"
-          placeholder="xxx xxx xxxx"
-          value={contactInfo.phone || ""}
-          onChange={({ target }) => updateSection("phone", target.value)}
-        />
-
-        <Input
-          label="LinkedIn"
-          placeholder="https://linkedin.com/in/username"
-          value={contactInfo.linkedin || ""}
-          onChange={({ target }) => updateSection("linkedin", target.value)}
-        />
-
-        <Input
-          label="GitHub"
-          placeholder="https://github.com/username"
-          value={contactInfo.github || ""}
-          onChange={({ target }) => updateSection("github", target.value)}
-        />
-
-        <div className="md:col-span-2">
-          <Input
-            label="Portfolio / Website"
-            placeholder="https://yourwebsite.live"
-            value={contactInfo.website || ""}
-            onChange={({ target }) => updateSection("website", target.value)}
-          />
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// EducationDetailsForm Component
-export const EducationDetailsForm = ({ educationInfo, updateArrayItem, addArrayItem, removeArrayItem }) => {
-  return (
-    <div className={educationDetailsStyles.container}>
-      <h2 className={educationDetailsStyles.heading}>Education</h2>
-      <div className="space-y-6 mb-6">
-        {educationInfo.map((education, index) => (
-          <div key={index} className={educationDetailsStyles.item}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Input
-                label="Degree"
-                placeholder="BTech in Computer Science"
-                value={education.degree || ""}
-                onChange={({ target }) => updateArrayItem(index, "degree", target.value)}
-              />
-
-              <Input
-                label="Institution"
-                placeholder="XYZ University"
-                value={education.institution || ""}
-                onChange={({ target }) => updateArrayItem(index, "institution", target.value)}
-              />
-
-                <Input
-                  label="Start Date"
-                  type="date"
-                  value={education.startDate ? `${education.startDate}-01` : ""}
-                  onChange={({ target }) => updateArrayItem(index, "startDate", target.value.slice(0,7))}
-                  min="1900-01-01"
-                />
-
-                <Input
-                  label="End Date"
-                  type="date"
-                  value={education.endDate ? `${education.endDate}-01` : ""}
-                  onChange={({ target }) => updateArrayItem(index, "endDate", target.value.slice(0,7))}
-                  min="1900-01-01"
-                />
-            </div>
-            {educationInfo.length > 1 && (
-              <button
-                type="button"
-                className={commonStyles.trashButton}
-                onClick={() => removeArrayItem(index)}
-              >
-                <Trash2 size={16} />
-              </button>
-            )}
-          </div>
-        ))}
-
-        <button
-          type="button"
-          className={`${commonStyles.addButtonBase} ${educationDetailsStyles.addButton}`}
-          onClick={() =>
-            addArrayItem({
-              degree: "",
-              institution: "",
-              startDate: "",
-              endDate: "",
-            })
-          }
-        >
-          <Plus size={16} /> Add Education
-        </button>
-      </div>
-    </div>
-  );
-};
-
-// ProfileInfoForm Component
-export const ProfileInfoForm = ({ profileData, updateSection }) => {
-  return (
-    <div className={profileInfoStyles.container}>
-      <h2 className={profileInfoStyles.heading}>Personal Information</h2>
-
-      <div className="space-y-8">
+export const ContactInfoForm = ({ contactInfo, updateSection }) => (
+    <div className={card}>
+        <h2 className={heading}>Contact Information</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Input
-            label="Full Name"
-            placeholder="Your full name..."
-            value={profileData.fullName || ""}
-            onChange={({ target }) => updateSection("fullName", target.value)}
-          />
-
-          <Input
-            label="Designation"
-            placeholder="Your desired designation..."
-            value={profileData.designation || ""}
-            onChange={({ target }) => updateSection("designation", target.value)}
-          />
-
-          <div className="md:col-span-2">
-            <label className="block text-sm font-bold text-slate-700 mb-3">Summary</label>
-            <textarea
-              className={profileInfoStyles.textarea}
-              rows={4}
-              placeholder="Short introduction about yourself"
-              value={profileData.summary || ""}
-              onChange={({ target }) => updateSection("summary", target.value)}
-            />
-          </div>
+            <div className="md:col-span-2">
+                <Input label="Address" placeholder="Short Address" value={contactInfo.location || ""}
+                    onChange={({ target }) => updateSection("location", target.value)} />
+            </div>
+            <Input label="Email" placeholder="example@mail.com" type="email" value={contactInfo.email || ""}
+                onChange={({ target }) => updateSection("email", target.value)} />
+            <Input label="Phone Number" placeholder="xxx xxx xxxx" value={contactInfo.phone || ""}
+                onChange={({ target }) => updateSection("phone", target.value)} />
+            <Input label="LinkedIn" placeholder="https://linkedin.com/in/username" value={contactInfo.linkedin || ""}
+                onChange={({ target }) => updateSection("linkedin", target.value)} />
+            <Input label="GitHub" placeholder="https://github.com/username" value={contactInfo.github || ""}
+                onChange={({ target }) => updateSection("github", target.value)} />
+            <div className="md:col-span-2">
+                <Input label="Portfolio / Website" placeholder="https://yourwebsite.live" value={contactInfo.website || ""}
+                    onChange={({ target }) => updateSection("website", target.value)} />
+            </div>
         </div>
-      </div>
     </div>
-  );
-};
+);
 
-// ProjectDetailForm Component
-export const ProjectDetailForm = ({ projectInfo, updateArrayItem, addArrayItem, removeArrayItem }) => {
-  return (
-    <div className={projectDetailStyles.container}>
-      <h2 className={projectDetailStyles.heading}>Projects</h2>
-      <div className="space-y-6 mb-6">
-        {projectInfo.map((project, index) => (
-          <div key={index} className={projectDetailStyles.item}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="md:col-span-2">
-                <Input
-                  label="Project Title"
-                  placeholder="Portfolio Website"
-                  value={project.title || ""}
-                  onChange={({ target }) => updateArrayItem(index, "title", target.value)}
-                />
-              </div>
-
-              <div className="md:col-span-2">
-                <label className="block text-sm font-bold text-slate-700 mb-3">Description</label>
-                <textarea
-                  placeholder="Short description about the project"
-                  className={projectDetailStyles.textarea}
-                  rows={3}
-                  value={project.description || ""}
-                  onChange={({ target }) => updateArrayItem(index, "description", target.value)}
-                />
-              </div>
-
-              <Input
-                label="GitHub Link"
-                placeholder="https://github.com/username/project"
-                value={project.github || ""}
-                onChange={({ target }) => updateArrayItem(index, "github", target.value)}
-              />
-
-              <Input
-                label="Live Demo URL"
-                placeholder="https://yourproject.live"
-                value={project.liveDemo || ""}
-                onChange={({ target }) => updateArrayItem(index, "liveDemo", target.value)}
-              />
-            </div>
-
-            {projectInfo.length > 1 && (
-              <button
-                type="button"
-                className={commonStyles.trashButton}
-                onClick={() => removeArrayItem(index)}
-              >
-                <Trash2 size={16} />
-              </button>
-            )}
-          </div>
-        ))}
-
-        <button
-          type="button"
-          className={`${commonStyles.addButtonBase} ${projectDetailStyles.addButton}`}
-          onClick={() =>
-            addArrayItem({
-              title: "",
-              description: "",
-              github: "",
-              liveDemo: "",
-            })
-          }
-        >
-          <Plus size={16} />
-          Add Project
-        </button>
-      </div>
-    </div>
-  );
-};
-
-// SkillsInfoForm Component
-export const SkillsInfoForm = ({ skillsInfo, updateArrayItem, addArrayItem, removeArrayItem }) => {
-  return (
-    <div className={skillsInfoStyles.container}>
-      <h2 className={skillsInfoStyles.heading}>Skills</h2>
-      <div className="space-y-6 mb-6">
-        {skillsInfo.map((skill, index) => (
-          <div key={index} className={skillsInfoStyles.item}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Input
-                label="Skill Name"
-                placeholder="JavaScript"
-                value={skill.name || ""}
-                onChange={({ target }) => updateArrayItem(index, "name", target.value)}
-              />
-
-              <div>
-                <label className="block text-sm font-bold text-slate-700 mb-3">
-                  Proficiency ({skill.progress ? Math.round(skill.progress / 20) : 0}/5)
-                </label>
-                <div className="mt-2">
-                  <RatingInput
-                    value={skill.progress || 0}
-                    total={5}
-                    color="#f59e0b"
-                    bgColor="#e2e8f0"
-                    onChange={(newValue) => updateArrayItem(index, "progress", newValue)}
-                  />
+export const EducationDetailsForm = ({ educationInfo, updateArrayItem, addArrayItem, removeArrayItem }) => (
+    <div className={card}>
+        <h2 className={heading}>Education</h2>
+        <div className="space-y-6 mb-6">
+            {educationInfo.map((edu, index) => (
+                <div key={index} className="bg-gray-50 border border-gray-200 rounded-2xl p-5">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <Input label="Degree" placeholder="Bachelor of Technology" value={edu.degree || ""}
+                            onChange={({ target }) => updateArrayItem(index, "degree", target.value)} />
+                        <Input label="Institution" placeholder="MIT / IIT / etc." value={edu.institution || ""}
+                            onChange={({ target }) => updateArrayItem(index, "institution", target.value)} />
+                        <Input label="Start Date" type="date" value={edu.startDate ? `${edu.startDate}-01` : ""}
+                            onChange={({ target }) => updateArrayItem(index, "startDate", target.value.slice(0, 7))} min="1900-01-01" />
+                        <Input label="End Date" type="date" value={edu.endDate ? `${edu.endDate}-01` : ""}
+                            onChange={({ target }) => updateArrayItem(index, "endDate", target.value.slice(0, 7))} min="1900-01-01" />
+                    </div>
+                    {educationInfo.length > 1 && (
+                        <button type="button" className={`${trashBtn} mt-4`} onClick={() => removeArrayItem(index)}>
+                            <Trash2 size={14} /> Remove
+                        </button>
+                    )}
                 </div>
-              </div>
-            </div>
-
-            {skillsInfo.length > 1 && (
-              <button
-                type="button"
-                className={commonStyles.trashButton}
-                onClick={() => removeArrayItem(index)}
-              >
-                <Trash2 size={16} />
-              </button>
-            )}
-          </div>
-        ))}
-
-        <button
-          type="button"
-          className={`${commonStyles.addButtonBase} ${skillsInfoStyles.addButton}`}
-          onClick={() =>
-            addArrayItem({
-              name: "",
-              progress: 0,
-            })
-          }
-        >
-          <Plus size={16} /> Add Skill
-        </button>
-      </div>
+            ))}
+            <button type="button" className={`${addBtn} border-emerald-300 text-emerald-600 hover:bg-emerald-50 hover:border-emerald-500`}
+                onClick={() => addArrayItem({ degree: "", institution: "", startDate: "", endDate: "" })}>
+                <Plus size={16} /> Add Education
+            </button>
+        </div>
     </div>
-  );
-};
+);
 
-// WorkExperienceForm Component
-export const WorkExperienceForm = ({ workExperience, updateArrayItem, addArrayItem, removeArrayItem }) => {
-  return (
-    <div className={workExperienceStyles.container}>
-      <h2 className={workExperienceStyles.heading}>Work Experience</h2>
-      <div className="space-y-6 mb-6">
-        {workExperience.map((experience, index) => (
-          <div key={index} className={workExperienceStyles.item}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Input
-                label="Company"
-                placeholder="ABC Corp"
-                value={experience.company || ""}
-                onChange={({ target }) => updateArrayItem(index, "company", target.value)}
-              />
-
-              <Input
-                label="Role"
-                placeholder="Frontend Developer"
-                value={experience.role || ""}
-                onChange={({ target }) => updateArrayItem(index, "role", target.value)}
-              />
-
-              <Input
-                label="Start Date"
-                type="date"
-                value={experience.startDate ? `${experience.startDate}-01` : ""}
-                onChange={({ target }) => updateArrayItem(index, "startDate", target.value.slice(0,7))}
-                min="1900-01-01"
-              />
-
-              <Input
-                label="End Date"
-                type="date"
-                value={experience.endDate ? `${experience.endDate}-01` : ""}
-                onChange={({ target }) => updateArrayItem(index, "endDate", target.value.slice(0,7))}
-                min="1900-01-01"
-              />
+export const ProfileInfoForm = ({ profileData, updateSection }) => (
+    <div className={card}>
+        <h2 className={heading}>Profile Information</h2>
+        <div className="space-y-5">
+            <Input label="Full Name" placeholder="John Doe" value={profileData.fullName || ""}
+                onChange={({ target }) => updateSection("fullName", target.value)} />
+            <Input label="Designation" placeholder="Senior Software Developer" value={profileData.designation || ""}
+                onChange={({ target }) => updateSection("designation", target.value)} />
+            <div>
+                <label className={sectionLabel}>Professional Summary</label>
+                <textarea className={textarea} rows={5} placeholder="Short introduction about yourself"
+                    value={profileData.summary || ""} onChange={({ target }) => updateSection("summary", target.value)} />
             </div>
-
-            <div className="mt-6">
-              <label className="block text-sm font-bold text-slate-700 mb-3">Description</label>
-              <textarea
-                placeholder="What did you do in this role?"
-                className={workExperienceStyles.textarea}
-                rows={3}
-                value={experience.description || ""}
-                onChange={({ target }) => updateArrayItem(index, "description", target.value)}
-              />
-            </div>
-
-            {workExperience.length > 1 && (
-              <button
-                type="button"
-                className={commonStyles.trashButton}
-                onClick={() => removeArrayItem(index)}
-              >
-                <Trash2 size={16} />
-              </button>
-            )}
-          </div>
-        ))}
-
-        <button
-          type="button"
-          className={`${commonStyles.addButtonBase} ${workExperienceStyles.addButton}`}
-          onClick={() =>
-            addArrayItem({
-              company: "",
-              role: "",
-              startDate: "",
-              endDate: "",
-              description: "",
-            })
-          }
-        >
-          <Plus size={16} />
-          Add Work Experience
-        </button>
-      </div>
+        </div>
     </div>
-  );
-};
+);
+
+export const ProjectDetailForm = ({ projectInfo, updateArrayItem, addArrayItem, removeArrayItem }) => (
+    <div className={card}>
+        <h2 className={heading}>Projects</h2>
+        <div className="space-y-6 mb-6">
+            {projectInfo.map((project, index) => (
+                <div key={index} className="bg-gray-50 border border-gray-200 rounded-2xl p-5">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="md:col-span-2">
+                            <Input label="Project Title" placeholder="Portfolio Website" value={project.title || ""}
+                                onChange={({ target }) => updateArrayItem(index, "title", target.value)} />
+                        </div>
+                        <div className="md:col-span-2">
+                            <label className={sectionLabel}>Description</label>
+                            <textarea className={textarea} rows={3} placeholder="Short description about the project"
+                                value={project.description || ""} onChange={({ target }) => updateArrayItem(index, "description", target.value)} />
+                        </div>
+                        <Input label="GitHub Link" placeholder="https://github.com/username/project" value={project.github || ""}
+                            onChange={({ target }) => updateArrayItem(index, "github", target.value)} />
+                        <Input label="Live Demo URL" placeholder="https://yourproject.live" value={project.liveDemo || ""}
+                            onChange={({ target }) => updateArrayItem(index, "liveDemo", target.value)} />
+                    </div>
+                    {projectInfo.length > 1 && (
+                        <button type="button" className={`${trashBtn} mt-4`} onClick={() => removeArrayItem(index)}>
+                            <Trash2 size={14} /> Remove
+                        </button>
+                    )}
+                </div>
+            ))}
+            <button type="button" className={`${addBtn} border-fuchsia-300 text-fuchsia-600 hover:bg-fuchsia-50 hover:border-fuchsia-500`}
+                onClick={() => addArrayItem({ title: "", description: "", github: "", liveDemo: "" })}>
+                <Plus size={16} /> Add Project
+            </button>
+        </div>
+    </div>
+);
+
+export const SkillsInfoForm = ({ skillsInfo, updateArrayItem, addArrayItem, removeArrayItem }) => (
+    <div className={card}>
+        <h2 className={heading}>Skills</h2>
+        <div className="space-y-6 mb-6">
+            {skillsInfo.map((skill, index) => (
+                <div key={index} className="bg-gray-50 border border-gray-200 rounded-2xl p-5">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <Input label="Skill Name" placeholder="JavaScript" value={skill.name || ""}
+                            onChange={({ target }) => updateArrayItem(index, "name", target.value)} />
+                        <div>
+                            <label className={sectionLabel}>
+                                Proficiency ({skill.progress ? Math.round(skill.progress / 20) : 0}/5)
+                            </label>
+                            <div className="mt-2">
+                                <RatingInput value={skill.progress || 0} total={5} color="#f59e0b" bgColor="#e2e8f0"
+                                    onChange={(v) => updateArrayItem(index, "progress", v)} />
+                            </div>
+                        </div>
+                    </div>
+                    {skillsInfo.length > 1 && (
+                        <button type="button" className={`${trashBtn} mt-4`} onClick={() => removeArrayItem(index)}>
+                            <Trash2 size={14} /> Remove
+                        </button>
+                    )}
+                </div>
+            ))}
+            <button type="button" className={`${addBtn} border-amber-300 text-amber-600 hover:bg-amber-50 hover:border-amber-500`}
+                onClick={() => addArrayItem({ name: "", progress: 0 })}>
+                <Plus size={16} /> Add Skill
+            </button>
+        </div>
+    </div>
+);
+
+export const WorkExperienceForm = ({ workExperience, updateArrayItem, addArrayItem, removeArrayItem }) => (
+    <div className={card}>
+        <h2 className={heading}>Work Experience</h2>
+        <div className="space-y-6 mb-6">
+            {workExperience.map((exp, index) => (
+                <div key={index} className="bg-gray-50 border border-gray-200 rounded-2xl p-5">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <Input label="Company" placeholder="ABC Corp" value={exp.company || ""}
+                            onChange={({ target }) => updateArrayItem(index, "company", target.value)} />
+                        <Input label="Role" placeholder="Frontend Developer" value={exp.role || ""}
+                            onChange={({ target }) => updateArrayItem(index, "role", target.value)} />
+                        <Input label="Start Date" type="date" value={exp.startDate ? `${exp.startDate}-01` : ""}
+                            onChange={({ target }) => updateArrayItem(index, "startDate", target.value.slice(0, 7))} min="1900-01-01" />
+                        <Input label="End Date" type="date" value={exp.endDate ? `${exp.endDate}-01` : ""}
+                            onChange={({ target }) => updateArrayItem(index, "endDate", target.value.slice(0, 7))} min="1900-01-01" />
+                    </div>
+                    <div className="mt-6">
+                        <div className="flex items-center justify-between mb-3">
+                            <label className={sectionLabel}>Description</label>
+                            <AIImproveButton
+                                text={exp.description}
+                                role={exp.role}
+                                company={exp.company}
+                                onImproved={(improved) => updateArrayItem(index, "description", improved)}
+                            />
+                        </div>
+                        <textarea className={textarea} rows={4}
+                            placeholder={"What did you do in this role?\nTip: Write your description then click ✨ Improve with AI"}
+                            value={exp.description || ""}
+                            onChange={({ target }) => updateArrayItem(index, "description", target.value)} />
+                        <p className="text-xs text-gray-400 mt-1">
+                            💡 Write your raw description first, then use AI to make it ATS-friendly
+                        </p>
+                    </div>
+                    {workExperience.length > 1 && (
+                        <button type="button" className={`${trashBtn} mt-4`} onClick={() => removeArrayItem(index)}>
+                            <Trash2 size={14} /> Remove Experience
+                        </button>
+                    )}
+                </div>
+            ))}
+            <button type="button" className={`${addBtn} border-violet-300 text-violet-600 hover:bg-violet-50 hover:border-violet-500`}
+                onClick={() => addArrayItem({ company: "", role: "", startDate: "", endDate: "", description: "" })}>
+                <Plus size={16} /> Add Work Experience
+            </button>
+        </div>
+    </div>
+);
