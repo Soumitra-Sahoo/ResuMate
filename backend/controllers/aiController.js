@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai'
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
-const getModel = () => genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
+const getModel = () => genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
 
 export const improveBullet = async (req, res) => {
     try {
