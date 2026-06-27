@@ -1,6 +1,5 @@
 export const BASE_URL = 'https://resumate-jet-rho.vercel.app'
 
-//ROUTES USER FOR FRONTEND
 export const API_PATHS = {
     AUTH: {
         REGISTER: '/api/auth/register',
@@ -14,8 +13,16 @@ export const API_PATHS = {
         UPDATE: (id) => `/api/resume/${id}`,
         DELETE: (id) => `/api/resume/${id}`,
         UPLOAD_IMAGES: (id) => `/api/resume/${id}/upload-images`,
+        DUPLICATE: (id) => `/api/resume/${id}/duplicate`,
+        GENERATE_SHARE: (id) => `/api/resume/${id}/share`,
+        REVOKE_SHARE: (id) => `/api/resume/${id}/share`,
+        GET_PUBLIC: (token) => `/api/resume/view/${token}`,
     },
-    image: {
+    AI: {
+        IMPROVE_BULLET: '/api/ai/improve-bullet',
+        ATS_SCORE: '/api/ai/ats-score',
+    },
+    IMAGE: {
         UPLOAD_IMAGE: '/api/auth/upload-image'
     }
 }
