@@ -271,23 +271,6 @@ export const EducationDetailsForm = ({ educationInfo, updateArrayItem, addArrayI
     </div>
 );
 
-export const ProfileInfoForm = ({ profileData, updateSection }) => (
-    <div className={card}>
-        <h2 className={heading}>Profile Information</h2>
-        <div className="space-y-5">
-            <Input label="Full Name" placeholder="John Doe" value={profileData.fullName || ""}
-                onChange={({ target }) => updateSection("fullName", target.value)} />
-            <Input label="Designation" placeholder="Senior Software Developer" value={profileData.designation || ""}
-                onChange={({ target }) => updateSection("designation", target.value)} />
-            <div>
-                <label className={sectionLabel}>Professional Summary</label>
-                <textarea className={textarea} rows={5} placeholder="Short introduction about yourself"
-                    value={profileData.summary || ""} onChange={({ target }) => updateSection("summary", target.value)} />
-            </div>
-        </div>
-    </div>
-);
-
 export const SkillsInfoForm = ({ skillsInfo, updateArrayItem, addArrayItem, removeArrayItem }) => (
     <div className={card}>
         <h2 className={heading}>Skills</h2>
