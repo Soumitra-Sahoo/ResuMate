@@ -334,36 +334,95 @@ const EditResume = () => {
     }
 
     const uploadResumeImages = async () => {
+    try {
+        setIsLoading(true)
+        await axiosInstance.put(API_PATHS.RESUME.UPDATE(resumeId), {
+            ...resumeData,
+            completion: completionPercentage,
+        })
+
         try {
-            setIsLoading(true)
             const thumbnailElement = thumbnailRef.current
-            if (!thumbnailElement) throw new Error('Thumbnail element not found')
-            const fixedThumbnail = fixTailwindColors(thumbnailElement)
-            const canvas = await html2canvas(fixedThumbnail, {
-                scale: 0.3, backgroundColor: '#FFFFFF', logging: false, useCORS: true
-            })
-            document.body.removeChild(fixedThumbnail)
-            const dataUrl = canvas.toDataURL('image/png')
-            const file = dataURLtoFile(dataUrl, `thumbnail-${resumeId}.png`)
-            const formData = new FormData()
-            formData.append('thumbnail', file)
-            const uploadRes = await axiosInstance.post(
-                API_PATHS.RESUME.UPLOAD_IMAGES(resumeId), formData,
-                { headers: { 'Content-Type': 'multipart/form-data' } }
-            )
-            await axiosInstance.put(API_PATHS.RESUME.UPDATE(resumeId), {
-                ...resumeData,
-                thumbnailLink: uploadRes.data.thumbnailLink || '',
-                completion: completionPercentage,
-            })
-            toast.success('Resume saved successfully')
-            navigate('/dashboard')
-        } catch (error) {
-            toast.error(error.message || 'Failed to save resume')
-        } finally {
-            setIsLoading(false)
+            if (thumbnailElement) {
+                const styleOverride = document.createElement('style')
+                styleOverride.id = '__oklch_fix__'
+                styleOverride.textContent = `
+                    * {
+                        color: #000000 !important;
+                        border-color: #e5e7eb !important;
+                        outline-color: #e5e7eb !important;
+                    }
+                    [style*="oklch"] {
+                        color: #000000 !important;
+                        background-color: #ffffff !important;
+                        border-color: #e5e7eb !important;
+                    }
+                `
+                document.head.appendChild(styleOverride)
+                await new Promise(r => setTimeout(r, 100))
+
+                const canvas = await html2canvas(thumbnailElement, {
+                    scale: 0.5,
+                    backgroundColor: '#FFFFFF',
+                    logging: false,
+                    useCORS: true,
+                    allowTaint: false,
+                    onclone: (clonedDoc) => {
+                        const allEls = clonedDoc.querySelectorAll('*')
+                        allEls.forEach((el) => {
+                            const cs = window.getComputedStyle(el)
+                            ;['color','backgroundColor','borderColor',
+                              'borderTopColor','borderRightColor',
+                              'borderBottomColor','borderLeftColor'].forEach((prop) => {
+                                const val = cs[prop]
+                                if (val && val.includes('oklch')) {
+                                    el.style[prop] = prop === 'backgroundColor'
+                                        ? '#ffffff' : '#000000'
+                                }
+                            })
+                            // Strip oklch from inline styles
+                            if (el.style?.cssText?.includes('oklch')) {
+                                el.style.cssText = el.style.cssText
+                                    .replace(/oklch\([^)]+\)/g, '#000000')
+                            }
+                        })
+                    }
+                })
+                document.getElementById('__oklch_fix__')?.remove()
+
+                const dataUrl = canvas.toDataURL('image/png')
+                const file = dataURLtoFile(dataUrl, `thumbnail-${resumeId}.png`)
+                const formData = new FormData()
+                formData.append('thumbnail', file)
+
+                const uploadRes = await axiosInstance.post(
+                    API_PATHS.RESUME.UPLOAD_IMAGES(resumeId),
+                    formData,
+                    { headers: { 'Content-Type': 'multipart/form-data' } }
+                )
+
+                if (uploadRes.data?.thumbnailLink) {
+                    await axiosInstance.put(API_PATHS.RESUME.UPDATE(resumeId), {
+                        thumbnailLink: uploadRes.data.thumbnailLink,
+                    })
+                }
+            }
+        } catch (thumbError) {
+            // Thumbnail failed — not critical, resume data already saved
+            console.warn('Thumbnail generation failed (non-critical):', thumbError.message)
+            document.getElementById('__oklch_fix__')?.remove()
         }
+
+        toast.success('Resume saved successfully!')
+        navigate('/dashboard')
+
+    } catch (error) {
+        console.error('Save failed:', error)
+        toast.error(error.response?.data?.message || 'Failed to save resume')
+    } finally {
+        setIsLoading(false)
     }
+}
 
     const handleDeleteResume = async () => {
         try {

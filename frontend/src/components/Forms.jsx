@@ -110,9 +110,9 @@ export const CertificationInfoForm = ({ certifications, updateArrayItem, addArra
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <Input label="Certificate Title" placeholder="Full Stack Web Developer" value={cert.title || ""}
                             onChange={({ target }) => updateArrayItem(index, "title", target.value)} />
-                        <Input label="Issuer" placeholder="Coursera / Google / etc." value={cert.issuer || ""}
+                        <Input label="Issuer" placeholder=" Google / IBM etc." value={cert.issuer || ""}
                             onChange={({ target }) => updateArrayItem(index, "issuer", target.value)} />
-                        <Input label="Year" placeholder="2024" value={cert.year || ""}
+                        <Input label="Year" placeholder="2026" value={cert.year || ""}
                             onChange={({ target }) => updateArrayItem(index, "year", target.value)} />
                     </div>
                     {certifications.length > 1 && (
@@ -163,7 +163,7 @@ export const EducationDetailsForm = ({ educationInfo, updateArrayItem, addArrayI
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <Input label="Degree" placeholder="Bachelor of Technology" value={edu.degree || ""}
                             onChange={({ target }) => updateArrayItem(index, "degree", target.value)} />
-                        <Input label="Institution" placeholder="MIT / IIT / etc." value={edu.institution || ""}
+                        <Input label="Institution" placeholder="MIT / IIT  etc." value={edu.institution || ""}
                             onChange={({ target }) => updateArrayItem(index, "institution", target.value)} />
                         <Input label="Start Date" type="date" value={edu.startDate ? `${edu.startDate}-01` : ""}
                             onChange={({ target }) => updateArrayItem(index, "startDate", target.value.slice(0, 7))} min="1900-01-01" />
@@ -279,7 +279,7 @@ export const WorkExperienceForm = ({ workExperience, updateArrayItem, addArrayIt
             {workExperience.map((exp, index) => (
                 <div key={index} className="bg-gray-50 border border-gray-200 rounded-2xl p-5">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <Input label="Company" placeholder="ABC Corp" value={exp.company || ""}
+                        <Input label="Company" placeholder="ABC Company" value={exp.company || ""}
                             onChange={({ target }) => updateArrayItem(index, "company", target.value)} />
                         <Input label="Role" placeholder="Frontend Developer" value={exp.role || ""}
                             onChange={({ target }) => updateArrayItem(index, "role", target.value)} />

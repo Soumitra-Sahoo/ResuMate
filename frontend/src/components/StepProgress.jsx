@@ -31,7 +31,7 @@ const StepProgress = ({ progress }) => {
                 </div>
                 {progress >= 100 && (
                     <div className="w-6 h-6 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center">
-                        <Check size={12} className="text-white" />
+                        <Check size={10} className="text-white" />
                     </div>
                 )}
             </div>
