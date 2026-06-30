@@ -19,9 +19,11 @@ export const API_PATHS = {
         GET_PUBLIC: (token) => `/api/resume/view/${token}`,
     },
     AI: {
-        IMPROVE_BULLET: '/api/ai/improve-bullet',
-        ATS_SCORE: '/api/ai/ats-score',
-    },
+    IMPROVE_BULLET: '/api/ai/improve-bullet',
+    IMPROVE_SUMMARY: '/api/ai/improve-summary', 
+    IMPROVE_PROJECT: '/api/ai/improve-project', 
+    ATS_SCORE: '/api/ai/ats-score',
+},
     IMAGE: {
         UPLOAD_IMAGE: '/api/auth/upload-image'
     }

@@ -15,17 +15,21 @@ const textarea = "w-full text-sm text-slate-700 bg-gray-50 border border-gray-20
 const trashBtn = "flex items-center gap-2 text-xs font-bold text-red-500 hover:text-red-700 border border-red-200 hover:border-red-400 bg-red-50 hover:bg-red-100 px-3 py-2 rounded-xl transition-all";
 const addBtn = "flex items-center gap-2 text-sm font-bold px-5 py-2.5 rounded-xl border-2 border-dashed transition-all";
 
-const AIImproveButton = ({ text, role, company, onImproved }) => {
+// ─── Generic AI Improve Button (reusable) ─────────────────────────────────────
+const AIImproveButton = ({ text, context = {}, endpoint, onImproved, label = "✨ Improve with AI" }) => {
     const [loading, setLoading] = useState(false);
 
     const handleImprove = async () => {
-        if (!text?.trim()) { toast.error("Write something in the description first"); return; }
+        if (!text?.trim()) {
+            toast.error("Write something first before improving with AI");
+            return;
+        }
         setLoading(true);
-        const toastId = toast.loading("AI is improving your bullet point…");
+        const toastId = toast.loading("AI is improving your text…");
         try {
-            const res = await axiosInstance.post(API_PATHS.AI.IMPROVE_BULLET, { text, role, company });
+            const res = await axiosInstance.post(endpoint, { text, ...context });
             onImproved(res.data.improved);
-            toast.success("Bullet point improved!", { id: toastId });
+            toast.success("Improved successfully!", { id: toastId });
         } catch {
             toast.error("AI request failed. Try again.", { id: toastId });
         } finally {
@@ -37,10 +41,92 @@ const AIImproveButton = ({ text, role, company, onImproved }) => {
         <button type="button" onClick={handleImprove} disabled={loading}
             className="flex items-center gap-2 text-xs font-bold px-3 py-1.5 bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white rounded-xl hover:scale-105 transition-all shadow-md disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100">
             {loading ? <Loader2 size={13} className="animate-spin" /> : <Sparkles size={13} />}
-            {loading ? "Improving…" : "✨ Improve with AI"}
+            {loading ? "Improving…" : label}
         </button>
     );
 };
+
+export const ProfileInfoForm = ({ profileData, updateSection }) => (
+    <div className={card}>
+        <h2 className={heading}>Profile Information</h2>
+        <div className="space-y-5">
+            <Input label="Full Name" placeholder="John Doe" value={profileData.fullName || ""}
+                onChange={({ target }) => updateSection("fullName", target.value)} />
+            <Input label="Designation" placeholder="Senior Software Developer" value={profileData.designation || ""}
+                onChange={({ target }) => updateSection("designation", target.value)} />
+            <div>
+                <div className="flex items-center justify-between mb-3">
+                    <label className={sectionLabel}>Professional Summary</label>
+                    <AIImproveButton
+                        text={profileData.summary}
+                        context={{ designation: profileData.designation }}
+                        endpoint={API_PATHS.AI.IMPROVE_SUMMARY}
+                        onImproved={(improved) => updateSection("summary", improved)}
+                    />
+                </div>
+                <textarea
+                    className={textarea}
+                    rows={5}
+                    placeholder="Short introduction about yourself"
+                    value={profileData.summary || ""}
+                    onChange={({ target }) => updateSection("summary", target.value)}
+                />
+                <p className="text-xs text-gray-400 mt-1">
+                    💡 Write a draft first, then click ✨ Improve with AI for a concise, punchy version
+                </p>
+            </div>
+        </div>
+    </div>
+);
+
+export const ProjectDetailForm = ({ projectInfo, updateArrayItem, addArrayItem, removeArrayItem }) => (
+    <div className={card}>
+        <h2 className={heading}>Projects</h2>
+        <div className="space-y-6 mb-6">
+            {projectInfo.map((project, index) => (
+                <div key={index} className="bg-gray-50 border border-gray-200 rounded-2xl p-5">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="md:col-span-2">
+                            <Input label="Project Title" placeholder="Portfolio Website" value={project.title || ""}
+                                onChange={({ target }) => updateArrayItem(index, "title", target.value)} />
+                        </div>
+                        <div className="md:col-span-2">
+                            <div className="flex items-center justify-between mb-3">
+                                <label className={sectionLabel}>Description</label>
+                                <AIImproveButton
+                                    text={project.description}
+                                    context={{ title: project.title }}
+                                    endpoint={API_PATHS.AI.IMPROVE_PROJECT}
+                                    onImproved={(improved) => updateArrayItem(index, "description", improved)}
+                                />
+                            </div>
+                            <textarea
+                                className={textarea}
+                                rows={3}
+                                placeholder="Short description about the project"
+                                value={project.description || ""}
+                                onChange={({ target }) => updateArrayItem(index, "description", target.value)}
+                            />
+                        </div>
+                        <Input label="GitHub Link" placeholder="https://github.com/username/project" value={project.github || ""}
+                            onChange={({ target }) => updateArrayItem(index, "github", target.value)} />
+                        <Input label="Live Demo URL" placeholder="https://yourproject.live" value={project.liveDemo || ""}
+                            onChange={({ target }) => updateArrayItem(index, "liveDemo", target.value)} />
+                    </div>
+                    {projectInfo.length > 1 && (
+                        <button type="button" className={`${trashBtn} mt-4`} onClick={() => removeArrayItem(index)}>
+                            <Trash2 size={14} /> Remove
+                        </button>
+                    )}
+                </div>
+            ))}
+            <button type="button" className={`${addBtn} border-fuchsia-300 text-fuchsia-600 hover:bg-fuchsia-50 hover:border-fuchsia-500`}
+                onClick={() => addArrayItem({ title: "", description: "", github: "", liveDemo: "" })}>
+                <Plus size={16} /> Add Project
+            </button>
+        </div>
+    </div>
+);
 
 export const AdditionalInfoForm = ({ languages, interests, updateArrayItem, addArrayItem, removeArrayItem }) => (
     <div className={card}>
@@ -202,42 +288,6 @@ export const ProfileInfoForm = ({ profileData, updateSection }) => (
     </div>
 );
 
-export const ProjectDetailForm = ({ projectInfo, updateArrayItem, addArrayItem, removeArrayItem }) => (
-    <div className={card}>
-        <h2 className={heading}>Projects</h2>
-        <div className="space-y-6 mb-6">
-            {projectInfo.map((project, index) => (
-                <div key={index} className="bg-gray-50 border border-gray-200 rounded-2xl p-5">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="md:col-span-2">
-                            <Input label="Project Title" placeholder="Portfolio Website" value={project.title || ""}
-                                onChange={({ target }) => updateArrayItem(index, "title", target.value)} />
-                        </div>
-                        <div className="md:col-span-2">
-                            <label className={sectionLabel}>Description</label>
-                            <textarea className={textarea} rows={3} placeholder="Short description about the project"
-                                value={project.description || ""} onChange={({ target }) => updateArrayItem(index, "description", target.value)} />
-                        </div>
-                        <Input label="GitHub Link" placeholder="https://github.com/username/project" value={project.github || ""}
-                            onChange={({ target }) => updateArrayItem(index, "github", target.value)} />
-                        <Input label="Live Demo URL" placeholder="https://yourproject.live" value={project.liveDemo || ""}
-                            onChange={({ target }) => updateArrayItem(index, "liveDemo", target.value)} />
-                    </div>
-                    {projectInfo.length > 1 && (
-                        <button type="button" className={`${trashBtn} mt-4`} onClick={() => removeArrayItem(index)}>
-                            <Trash2 size={14} /> Remove
-                        </button>
-                    )}
-                </div>
-            ))}
-            <button type="button" className={`${addBtn} border-fuchsia-300 text-fuchsia-600 hover:bg-fuchsia-50 hover:border-fuchsia-500`}
-                onClick={() => addArrayItem({ title: "", description: "", github: "", liveDemo: "" })}>
-                <Plus size={16} /> Add Project
-            </button>
-        </div>
-    </div>
-);
-
 export const SkillsInfoForm = ({ skillsInfo, updateArrayItem, addArrayItem, removeArrayItem }) => (
     <div className={card}>
         <h2 className={heading}>Skills</h2>
@@ -279,7 +329,7 @@ export const WorkExperienceForm = ({ workExperience, updateArrayItem, addArrayIt
             {workExperience.map((exp, index) => (
                 <div key={index} className="bg-gray-50 border border-gray-200 rounded-2xl p-5">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <Input label="Company" placeholder="ABC Company" value={exp.company || ""}
+                        <Input label="Company" placeholder="ABC Corp" value={exp.company || ""}
                             onChange={({ target }) => updateArrayItem(index, "company", target.value)} />
                         <Input label="Role" placeholder="Frontend Developer" value={exp.role || ""}
                             onChange={({ target }) => updateArrayItem(index, "role", target.value)} />
@@ -293,15 +343,18 @@ export const WorkExperienceForm = ({ workExperience, updateArrayItem, addArrayIt
                             <label className={sectionLabel}>Description</label>
                             <AIImproveButton
                                 text={exp.description}
-                                role={exp.role}
-                                company={exp.company}
+                                context={{ role: exp.role, company: exp.company }}
+                                endpoint={API_PATHS.AI.IMPROVE_BULLET}
                                 onImproved={(improved) => updateArrayItem(index, "description", improved)}
                             />
                         </div>
-                        <textarea className={textarea} rows={4}
+                        <textarea
+                            className={textarea}
+                            rows={4}
                             placeholder={"What did you do in this role?\nTip: Write your description then click ✨ Improve with AI"}
                             value={exp.description || ""}
-                            onChange={({ target }) => updateArrayItem(index, "description", target.value)} />
+                            onChange={({ target }) => updateArrayItem(index, "description", target.value)}
+                        />
                         <p className="text-xs text-gray-400 mt-1">
                             💡 Write your raw description first, then use AI to make it ATS-friendly
                         </p>

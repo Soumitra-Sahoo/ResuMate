@@ -91,3 +91,53 @@ function buildResumeText(r) {
     if (r.certifications?.length) lines.push('\nCERTIFICATIONS: ' + r.certifications.map(c => `${c.title} (${c.year})`).join(', '))
     return lines.join('\n')
 }
+
+export const improveSummary = async (req, res) => {
+    try {
+        const { text, designation = '' } = req.body
+        if (!text || !text.trim()) {
+            return res.status(400).json({ message: 'Text is required' })
+        }
+
+        const model = getModel()
+        const prompt = `You are a professional resume writer. Rewrite the following professional summary to be concise and punchy. Keep it to 2-3 short, high-impact sentences maximum. Cut filler words, use strong language, and make every word count. It should grab a recruiter's attention in under 10 seconds of reading.
+
+Job Title: ${designation || 'Not specified'}
+Original summary: "${text}"
+
+Return ONLY the improved summary text. No explanations, no quotes, no formatting, no markdown.`
+
+        const result = await model.generateContent(prompt)
+        const improved = result.response.text().trim()
+
+        res.json({ improved })
+    } catch (error) {
+        console.error('Gemini improve-summary error:', error)
+        res.status(500).json({ message: 'AI request failed', error: error.message })
+    }
+}
+
+export const improveProject = async (req, res) => {
+    try {
+        const { text, title = '' } = req.body
+        if (!text || !text.trim()) {
+            return res.status(400).json({ message: 'Text is required' })
+        }
+
+        const model = getModel()
+        const prompt = `You are a professional resume writer. Rewrite the following project description to be more impactful and recruiter-friendly. Highlight the technical achievement, the problem solved, and the outcome/impact where possible. Keep it to 1-2 concise sentences. Use strong action verbs.
+
+Project Name: ${title || 'Not specified'}
+Original description: "${text}"
+
+Return ONLY the improved description text. No explanations, no quotes, no formatting, no markdown.`
+
+        const result = await model.generateContent(prompt)
+        const improved = result.response.text().trim()
+
+        res.json({ improved })
+    } catch (error) {
+        console.error('Gemini improve-project error:', error)
+        res.status(500).json({ message: 'AI request failed', error: error.message })
+    }
+}
