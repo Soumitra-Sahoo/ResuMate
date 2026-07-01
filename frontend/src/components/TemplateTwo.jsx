@@ -182,15 +182,22 @@ const TemplateTwo = ({ resumeData = {}, containerWidth }) => {
 
       {/* Skills */}
       {skills.length > 0 && (
-        <section className="mb-2">
-          <h2 className={sectionTitleClass}>Skills</h2>
-          <ul className="text-[11px] text-gray-800 flex flex-wrap gap-1">
-            {skills.map((skill, idx) => (
-              <li key={idx} className="w-fit">{skill.name}</li>
-            ))}
-          </ul>
-        </section>
-      )}
+    <section className="mb-2">
+        <h2 className={sectionTitleClass}>Skills</h2>
+        <div className="space-y-1.5">
+            {['Languages', 'Frameworks', 'Tools', 'Soft Skills', 'Other'].map(cat => {
+                const items = skills.filter(s => (s.category || 'Other') === cat && s.name);
+                if (!items.length) return null;
+                return (
+                    <p key={cat} className="text-[11px] text-gray-800">
+                        <span className="font-semibold">{cat}: </span>
+                        {items.map(s => s.name).join(', ')}
+                    </p>
+                );
+            })}
+        </div>
+    </section>
+)}
 
       {/* Certifications */}
 {certifications.length > 0 && (

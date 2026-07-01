@@ -178,19 +178,25 @@ const TemplateSeven = ({ resumeData = {}, containerWidth }) => {
           <div>
             {skills.length > 0 && (
               <Section title="Core Competencies">
-                <div className="grid grid-cols-2 gap-x-4 gap-y-1">
-                  {skills.map(
-                    (skill, i) =>
-                      skill.name && (
-                        <div
-                          key={i}
-                          className="flex items-center gap-2 text-xs text-gray-700"
-                        >
-                          <span className="text-gray-400">▪</span>
-                          {skill.name}
-                        </div>
-                      ),
-                  )}
+                <div className="space-y-2">
+                  {[
+                    "Languages",
+                    "Frameworks",
+                    "Tools",
+                    "Soft Skills",
+                    "Other",
+                  ].map((cat) => {
+                    const items = skills.filter(
+                      (s) => (s.category || "Other") === cat && s.name,
+                    );
+                    if (!items.length) return null;
+                    return (
+                      <p key={cat} className="text-xs text-gray-700">
+                        <span className="font-bold">{cat}: </span>
+                        {items.map((s) => s.name).join(", ")}
+                      </p>
+                    );
+                  })}
                 </div>
               </Section>
             )}

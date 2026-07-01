@@ -118,22 +118,27 @@ const TemplateFive = ({ resumeData = {}, containerWidth }) => {
 
         {/* Skills */}
         {skills.length > 0 && (
-          <SideSection title="Skills">
-            <div className="flex flex-wrap gap-1.5">
-              {skills.map(
-                (skill, i) =>
-                  skill.name && (
-                    <span
-                      key={i}
-                      className="text-[10px] bg-white/10 text-gray-200 px-2 py-0.5 rounded-full font-light"
-                    >
-                      {skill.name}
-                    </span>
-                  ),
-              )}
-            </div>
-          </SideSection>
-        )}
+    <SideSection title="Skills">
+        <div className="space-y-2">
+            {['Languages', 'Frameworks', 'Tools', 'Soft Skills', 'Other'].map(cat => {
+                const items = skills.filter(s => (s.category || 'Other') === cat && s.name);
+                if (!items.length) return null;
+                return (
+                    <div key={cat}>
+                        <p className="text-[9px] text-violet-300 font-medium mb-1">{cat}</p>
+                        <div className="flex flex-wrap gap-1.5">
+                            {items.map((skill, i) => (
+                                <span key={i} className="text-[10px] bg-white/10 text-gray-200 px-2 py-0.5 rounded-full font-light">
+                                    {skill.name}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+                );
+            })}
+        </div>
+    </SideSection>
+)}
 
         {/* Education */}
         {education.length > 0 && (

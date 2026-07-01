@@ -186,17 +186,27 @@ const TemplateFour = ({ resumeData = {}, containerWidth }) => {
         {/* Skills */}
         {skills.length > 0 && (
           <Section title="Skills">
-            <div className="flex flex-wrap gap-2">
-              {skills.map(
-                (skill, i) =>
-                  skill.name && (
-                    <span
-                      key={i}
-                      className="text-xs text-gray-500 font-light border border-gray-200 px-3 py-1 rounded-full"
+            <div className="space-y-2">
+              {["Languages", "Frameworks", "Tools", "Soft Skills", "Other"].map(
+                (cat) => {
+                  const items = skills.filter(
+                    (s) => (s.category || "Other") === cat && s.name,
+                  );
+                  if (!items.length) return null;
+                  return (
+                    <div
+                      key={cat}
+                      className="flex flex-wrap items-baseline gap-2"
                     >
-                      {skill.name}
-                    </span>
-                  ),
+                      <span className="text-[10px] text-gray-400 font-light uppercase tracking-wide w-20 flex-shrink-0">
+                        {cat}
+                      </span>
+                      <span className="text-xs text-gray-500 font-light">
+                        {items.map((s) => s.name).join(" · ")}
+                      </span>
+                    </div>
+                  );
+                },
               )}
             </div>
           </Section>

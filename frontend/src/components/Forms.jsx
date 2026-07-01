@@ -271,39 +271,91 @@ export const EducationDetailsForm = ({ educationInfo, updateArrayItem, addArrayI
     </div>
 );
 
-export const SkillsInfoForm = ({ skillsInfo, updateArrayItem, addArrayItem, removeArrayItem }) => (
-    <div className={card}>
-        <h2 className={heading}>Skills</h2>
-        <div className="space-y-6 mb-6">
-            {skillsInfo.map((skill, index) => (
-                <div key={index} className="bg-gray-50 border border-gray-200 rounded-2xl p-5">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <Input label="Skill Name" placeholder="JavaScript" value={skill.name || ""}
-                            onChange={({ target }) => updateArrayItem(index, "name", target.value)} />
-                        <div>
-                            <label className={sectionLabel}>
-                                Proficiency ({skill.progress ? Math.round(skill.progress / 20) : 0}/5)
-                            </label>
-                            <div className="mt-2">
-                                <RatingInput value={skill.progress || 0} total={5} color="#f59e0b" bgColor="#e2e8f0"
-                                    onChange={(v) => updateArrayItem(index, "progress", v)} />
+// ─── SkillsInfoForm — category-based, no proficiency rating ──────────────────
+const SKILL_CATEGORIES = ['Languages', 'Frameworks', 'Tools', 'Soft Skills', 'Other'];
+
+const categoryColors = {
+    'Languages': 'bg-blue-50 border-blue-200 text-blue-700',
+    'Frameworks': 'bg-violet-50 border-violet-200 text-violet-700',
+    'Tools': 'bg-emerald-50 border-emerald-200 text-emerald-700',
+    'Soft Skills': 'bg-amber-50 border-amber-200 text-amber-700',
+    'Other': 'bg-gray-50 border-gray-200 text-gray-700',
+};
+
+export const SkillsInfoForm = ({ skillsInfo, updateArrayItem, addArrayItem, removeArrayItem }) => {
+    const grouped = SKILL_CATEGORIES.reduce((acc, cat) => {
+        acc[cat] = skillsInfo.filter(s => (s.category || 'Other') === cat && s.name?.trim());
+        return acc;
+    }, {});
+
+    return (
+        <div className={card}>
+            <h2 className={heading}>Skills</h2>
+
+            <div className="space-y-4 mb-6">
+                {skillsInfo.map((skill, index) => (
+                    <div key={index} className="bg-gray-50 border border-gray-200 rounded-2xl p-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
+                            <Input
+                                label="Skill Name"
+                                placeholder="e.g. JavaScript, Leadership, Figma"
+                                value={skill.name || ""}
+                                onChange={({ target }) => updateArrayItem(index, "name", target.value)}
+                            />
+                            <div>
+                                <label className={sectionLabel}>Category</label>
+                                <select
+                                    value={skill.category || 'Other'}
+                                    onChange={(e) => updateArrayItem(index, "category", e.target.value)}
+                                    className="w-full text-sm text-slate-700 bg-white border border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 transition-all"
+                                >
+                                    {SKILL_CATEGORIES.map(cat => (
+                                        <option key={cat} value={cat}>{cat}</option>
+                                    ))}
+                                </select>
                             </div>
                         </div>
+                        {skillsInfo.length > 1 && (
+                            <button type="button" className={`${trashBtn} mt-3`} onClick={() => removeArrayItem(index)}>
+                                <Trash2 size={14} /> Remove
+                            </button>
+                        )}
                     </div>
-                    {skillsInfo.length > 1 && (
-                        <button type="button" className={`${trashBtn} mt-4`} onClick={() => removeArrayItem(index)}>
-                            <Trash2 size={14} /> Remove
-                        </button>
-                    )}
+                ))}
+                <button
+                    type="button"
+                    className={`${addBtn} border-amber-300 text-amber-600 hover:bg-amber-50 hover:border-amber-500`}
+                    onClick={() => addArrayItem({ name: "", category: "Other" })}
+                >
+                    <Plus size={16} /> Add Skill
+                </button>
+            </div>
+
+            {/* Live grouped preview */}
+            {skillsInfo.some(s => s.name?.trim()) && (
+                <div className="border-t border-gray-100 pt-5">
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Preview by Category</p>
+                    <div className="space-y-3">
+                        {SKILL_CATEGORIES.map(cat => (
+                            grouped[cat].length > 0 && (
+                                <div key={cat} className="flex flex-wrap items-center gap-2">
+                                    <span className="text-xs font-bold text-gray-500 w-24 flex-shrink-0">{cat}</span>
+                                    <div className="flex flex-wrap gap-1.5">
+                                        {grouped[cat].map((s, i) => (
+                                            <span key={i} className={`text-xs font-medium px-2.5 py-1 rounded-full border ${categoryColors[cat]}`}>
+                                                {s.name}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            )
+                        ))}
+                    </div>
                 </div>
-            ))}
-            <button type="button" className={`${addBtn} border-amber-300 text-amber-600 hover:bg-amber-50 hover:border-amber-500`}
-                onClick={() => addArrayItem({ name: "", progress: 0 })}>
-                <Plus size={16} /> Add Skill
-            </button>
+            )}
         </div>
-    </div>
-);
+    );
+};
 
 export const WorkExperienceForm = ({ workExperience, updateArrayItem, addArrayItem, removeArrayItem }) => (
     <div className={card}>

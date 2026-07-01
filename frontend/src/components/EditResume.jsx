@@ -207,7 +207,10 @@ const EditResume = () => {
             if (e.degree) done++; if (e.institution) done++
             if (e.startDate) done++; if (e.endDate) done++
         })
-        resumeData.skills.forEach(s => { total += 2; if (s.name) done++; if (s.progress > 0) done++ })
+        resumeData.skills.forEach(s => {
+             total += 1;
+             if (s.name) done++;
+        })
         resumeData.projects.forEach(p => {
             total += 4
             if (p.title) done++; if (p.description) done++
