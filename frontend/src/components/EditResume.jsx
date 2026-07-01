@@ -9,7 +9,6 @@ import {
 import axiosInstance from '../utils/axiosInstance'
 import { API_PATHS } from '../utils/apiPaths'
 import toast from 'react-hot-toast'
-import { fixTailwindColors } from '../utils/color'
 import html2pdf from 'html2pdf.js'
 import html2canvas from 'html2canvas'
 import { dataURLtoFile } from '../utils/helper'
@@ -54,7 +53,7 @@ const ATSPanel = ({ resumeData, onClose }) => {
             }
         }
         fetch()
-    }, [])
+    }, [resumeData, onClose])
 
     const scoreColor = (s) => s >= 80 ? 'text-emerald-600' : s >= 60 ? 'text-amber-500' : 'text-red-500'
     const barColor = (s) => s >= 80 ? 'bg-emerald-500' : s >= 60 ? 'bg-amber-400' : 'bg-red-400'
@@ -225,7 +224,7 @@ const EditResume = () => {
         return pct
     }, [resumeData])
 
-    useEffect(() => { calculateCompletion() }, [resumeData])
+    useEffect(() => { calculateCompletion() }, [calculateCompletion])
 
     useEffect(() => {
         if (!resumeId || !hasUnsavedChanges) return
@@ -245,7 +244,7 @@ const EditResume = () => {
             }
         }, 2500)
         return () => clearTimeout(autoSaveTimerRef.current)
-    }, [resumeData, hasUnsavedChanges])
+    }, [resumeData, hasUnsavedChanges, completionPercentage, resumeId])
 
     const updateSection = (section, key, value) => {
         setHasUnsavedChanges(true)
@@ -272,7 +271,7 @@ const EditResume = () => {
         })
     }
 
-    const fetchResumeDetailsById = async () => {
+    const fetchResumeDetailsById = useCallback(async () => {
         try {
             const response = await axiosInstance.get(API_PATHS.RESUME.GET_BY_ID(resumeId))
             if (response.data && response.data.profileInfo) {
@@ -295,9 +294,9 @@ const EditResume = () => {
         } catch {
             toast.error('Failed to load resume data')
         }
-    }
+    }, [resumeId])
 
-    useEffect(() => { if (resumeId) fetchResumeDetailsById() }, [resumeId])
+    useEffect(() => { if (resumeId) fetchResumeDetailsById() }, [resumeId, fetchResumeDetailsById])
 
     const pages = [
         'profile-info', 'contact-info', 'work-experience',

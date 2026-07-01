@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import React, { useEffect, useState, createContext } from 'react'
 import axiosInstance from '../utils/axiosInstance'
 import { API_PATHS } from '../utils/apiPaths'
@@ -25,7 +26,7 @@ const UserProvider = ({ children }) => {
             }
         }
         fetchUser()
-    }, [])
+    }, [user])
 
     const updateUser = (userData) => {
         setUser(userData)

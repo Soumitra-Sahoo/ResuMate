@@ -43,7 +43,7 @@ export const Input = ({ value, onChange, label, placeholder, type = 'text', min,
     )
 }
 
-export const ProfilePhotoSelector = ({ image, setImage, preview, setPreview }) => {
+export const ProfilePhotoSelector = ({ setImage, preview, setPreview }) => {
     const inputRef = useRef(null)
     const [previewUrl, setPreviewUrl] = useState(preview || null)
     const [hovered, setHovered] = useState(false)

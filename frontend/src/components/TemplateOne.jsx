@@ -23,7 +23,7 @@ const Title = ({ text, color }) => (
   </div>
 );
 
-const TemplateOne = ({ resumeData = {}, colorPalette, containerWidth }) => {
+const TemplateOne = ({ resumeData = {}, containerWidth }) => {
   const {
     profileInfo = {},
     contactInfo = {},

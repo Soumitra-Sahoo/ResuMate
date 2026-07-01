@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import DashboardLayout from "../components/DashboardLayout";
 import { useNavigate } from "react-router-dom";
 import { LucideFilePlus, LucideTrash2, Copy, Share2 } from "lucide-react";
@@ -82,7 +82,7 @@ const ShareModal = ({ isOpen, onClose, resumeId }) => {
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const generateLink = async () => {
+  const generateLink = useCallback(async () => {
     setLoading(true);
     try {
       const res = await axiosInstance.post(
@@ -94,7 +94,7 @@ const ShareModal = ({ isOpen, onClose, resumeId }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [resumeId]);
 
   const copyLink = () => {
     navigator.clipboard.writeText(shareUrl);
@@ -115,7 +115,7 @@ const ShareModal = ({ isOpen, onClose, resumeId }) => {
   useEffect(() => {
     if (isOpen && resumeId) generateLink();
     else setShareUrl("");
-  }, [isOpen, resumeId]);
+  }, [isOpen, resumeId, generateLink]);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Share Resume">
@@ -164,7 +164,7 @@ const Dashboard = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [shareResumeId, setShareResumeId] = useState(null);
 
-  const calculateCompletion = (resume) => {
+  const calculateCompletion = useCallback((resume) => {
     let done = 0,
       total = 0;
     total += 3;
@@ -214,9 +214,9 @@ const Dashboard = () => {
     total += resume.interests?.length || 0;
     done += resume.interests?.filter((i) => i?.trim() !== "")?.length || 0;
     return Math.round((done / total) * 100);
-  };
+  }, []);
 
-  const fetchAllResumes = async () => {
+  const fetchAllResumes = useCallback(async () => {
     try {
       setLoading(true);
       const response = await axiosInstance.get(API_PATHS.RESUME.GET_ALL);
@@ -230,11 +230,11 @@ const Dashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [calculateCompletion]);
 
   useEffect(() => {
     fetchAllResumes();
-  }, []);
+  }, [fetchAllResumes]);
 
   const handleDeleteResume = async () => {
     if (!resumeToDelete) return;

@@ -7,22 +7,6 @@ import Modal from '../components/Modal.jsx'
 import Login from '../components/Login.jsx'
 import SignUp from '../components/SignUp.jsx'
 
-// ─── Animated counter hook ─────────────────────────────────────────────────────
-const useCountUp = (end, duration = 2000) => {
-    const [count, setCount] = useState(0)
-    useEffect(() => {
-        let startTime = null
-        const animate = (timestamp) => {
-            if (!startTime) startTime = timestamp
-            const progress = Math.min((timestamp - startTime) / duration, 1)
-            setCount(Math.floor(progress * end))
-            if (progress < 1) requestAnimationFrame(animate)
-        }
-        requestAnimationFrame(animate)
-    }, [end, duration])
-    return count
-}
-
 // ─── Feature card ──────────────────────────────────────────────────────────────
 const FeatureCard = ({ icon, title, description, iconGradient, cardGradient, delay }) => (
     <div className="group relative" style={{ animationDelay: delay }}>

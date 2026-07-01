@@ -13,11 +13,6 @@ export function formatYearMonth(yearMonth) {
     return yearMonth ? dayjs(yearMonth, "YYYY-MM").format("MMM YYYY") : "";
 }
 
-const convertOklchToRgb = (colorStr) => {
-    if (!colorStr || !colorStr.includes('oklch')) return colorStr
-    return 'rgb(0, 0, 0)'
-}
-
 export function inlineAllComputedStyles(root) {
     const SAFE_PROPS = [
         'color', 'backgroundColor', 'borderColor', 'borderTopColor',
@@ -53,7 +48,7 @@ export function inlineAllComputedStyles(root) {
                     else val = 'rgb(0,0,0)'
                 }
                 node.style[prop] = val
-            } catch (e) {
+            } catch {
                 // skip
             }
         })
