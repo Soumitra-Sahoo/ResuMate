@@ -206,11 +206,7 @@ const Dashboard = () => {
       if (c.issuer) done++;
       if (c.year) done++;
     });
-    resume.languages?.forEach((l) => {
-      total += 2;
-      if (l.name) done++;
-      if (l.progress > 0) done++;
-    });
+    resume.languages?.forEach(l => { total += 1; if (l.name) done++ });
     total += resume.interests?.length || 0;
     done += resume.interests?.filter((i) => i?.trim() !== "")?.length || 0;
     return Math.round((done / total) * 100);

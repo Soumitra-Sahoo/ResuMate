@@ -87,7 +87,8 @@ const TemplateOne = ({ resumeData = {}, containerWidth }) => {
               </div>
             )}
             {contactInfo.location && (
-              <div className="flex items-center">
+              <div className="flex items-center gap-1">
+                <span className="text-gray-300">•</span>
                 <span>{contactInfo.location}</span>
               </div>
             )}

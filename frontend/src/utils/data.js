@@ -121,6 +121,11 @@ export const DUMMY_RESUME_DATA = {
       year: "2025",
     },
   ],
+  languages: [
+    { name: "English" },
+    { name: "Hindi" },
+  ],
+
   interests: [
     "Open Source Contributions",
     "Machine Learning",

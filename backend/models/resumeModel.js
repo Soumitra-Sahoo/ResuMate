@@ -51,7 +51,7 @@ const ResumeSchema = new mongoose.Schema(
       { title: String, description: String, github: String, liveDemo: String },
     ],
     certifications: [{ title: String, issuer: String, year: String }],
-    languages: [{ name: String, progress: Number }],
+    languages: [{ name: String }],
     interests: [String],
     isPublic: { type: Boolean, default: false },
     shareToken: { type: String, default: null },

@@ -216,7 +216,7 @@ const EditResume = () => {
             if (p.github) done++; if (p.liveDemo) done++
         })
         resumeData.certifications.forEach(c => { total += 3; if (c.title) done++; if (c.issuer) done++; if (c.year) done++ })
-        resumeData.languages.forEach(l => { total += 2; if (l.name) done++; if (l.progress > 0) done++ })
+        resumeData.languages?.forEach(l => { total += 1; if (l.name) done++ })
         total += resumeData.interests.length
         done += resumeData.interests.filter(i => i.trim() !== '').length
         const pct = Math.round((done / total) * 100)
@@ -302,38 +302,59 @@ const EditResume = () => {
         'profile-info', 'contact-info', 'work-experience',
         'education-info', 'skills', 'projects', 'certifications', 'additionalInfo'
     ]
-
+    const [fieldErrors, setFieldErrors] = useState({})
     const validateAndNext = () => {
-        const errors = []
-        switch (currentPage) {
-            case 'profile-info':
-                if (!resumeData.profileInfo.fullName?.trim()) errors.push('Full Name is required')
-                if (!resumeData.profileInfo.designation?.trim()) errors.push('Designation is required')
-                if (!resumeData.profileInfo.summary?.trim()) errors.push('Summary is required')
-                break
-            case 'contact-info':
-                if (!resumeData.contactInfo.email?.trim()) errors.push('Email is required')
-                if (!resumeData.contactInfo.phone?.trim()) errors.push('Phone is required')
-                break
-        }
-        if (errors.length) { setErrorMsg(errors.join(', ')); return }
-        setErrorMsg('')
-        if (currentPage === 'additionalInfo') { setOpenPreviewModal(true); return }
-        const idx = pages.indexOf(currentPage)
-        if (idx < pages.length - 1) {
-            setCurrentPage(pages[idx + 1])
-            setProgress(Math.round(((idx + 1) / (pages.length - 1)) * 100))
-            window.scrollTo({ top: 0, behavior: 'smooth' })
-        }
+    const errors = {}
+    switch (currentPage) {
+        case 'profile-info':
+            if (!resumeData.profileInfo.fullName?.trim()) errors.fullName = 'Full Name is required'
+            if (!resumeData.profileInfo.designation?.trim()) errors.designation = 'Designation is required'
+            if (!resumeData.profileInfo.summary?.trim()) errors.summary = 'Professional Summary is required'
+            break
+        case 'contact-info':
+            if (!resumeData.contactInfo.email?.trim()) errors.email = 'Email is required'
+            else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(resumeData.contactInfo.email)) errors.email = 'Enter a valid email address'
+            if (!resumeData.contactInfo.phone?.trim()) errors.phone = 'Phone number is required'
+            break
+        case 'education-info':
+            const hasValidEdu = resumeData.education.some(e => e.degree?.trim() && e.institution?.trim())
+            if (!hasValidEdu) errors._general = 'Add at least one education entry with Degree and Institution'
+            break
+        case 'work-experience':
+            const hasEmptyEntries = resumeData.workExperience.some(w => (w.company && !w.role) || (!w.company && w.role))
+            if (hasEmptyEntries) errors._general = 'Each work experience needs both Company and Role filled'
+            break
+        case 'skills':
+            const hasSkills = resumeData.skills.some(s => s.name?.trim())
+            if (!hasSkills) errors._general = 'Add at least one skill'
+            break
     }
 
-    const goBack = () => {
-        const idx = pages.indexOf(currentPage)
-        if (idx === 0) { navigate('/dashboard'); return }
-        setCurrentPage(pages[idx - 1])
-        setProgress(Math.round(((idx - 1) / (pages.length - 1)) * 100))
+    setFieldErrors(errors)
+
+    if (Object.keys(errors).length) {
+        setErrorMsg(errors._general || 'Please fix the highlighted fields below')
+        return
+    }
+
+    setErrorMsg('')
+    if (currentPage === 'additionalInfo') { setOpenPreviewModal(true); return }
+    const idx = pages.indexOf(currentPage)
+    if (idx < pages.length - 1) {
+        setCurrentPage(pages[idx + 1])
+        setProgress(Math.round(((idx + 1) / (pages.length - 1)) * 100))
         window.scrollTo({ top: 0, behavior: 'smooth' })
     }
+}
+
+    const goBack = () => {
+    setFieldErrors({})
+    const idx = pages.indexOf(currentPage)
+    if (idx === 0) { navigate('/dashboard'); return }
+    setCurrentPage(pages[idx - 1])
+    setProgress(Math.round(((idx - 1) / (pages.length - 1)) * 100))
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+}
 
     const uploadResumeImages = async () => {
     try {
@@ -477,9 +498,17 @@ const EditResume = () => {
     const renderForm = () => {
         switch (currentPage) {
             case 'profile-info':
-                return <ProfileInfoForm profileData={resumeData.profileInfo} updateSection={(k, v) => updateSection('profileInfo', k, v)} />
-            case 'contact-info':
-                return <ContactInfoForm contactInfo={resumeData.contactInfo} updateSection={(k, v) => updateSection('contactInfo', k, v)} />
+            return <ProfileInfoForm
+                profileData={resumeData.profileInfo}
+                updateSection={(k, v) => updateSection('profileInfo', k, v)}
+                fieldErrors={fieldErrors}
+            />
+        case 'contact-info':
+            return <ContactInfoForm
+                contactInfo={resumeData.contactInfo}
+                updateSection={(k, v) => updateSection('contactInfo', k, v)}
+                fieldErrors={fieldErrors}
+            />
             case 'work-experience':
                 return <WorkExperienceForm
                     workExperience={resumeData.workExperience}

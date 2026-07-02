@@ -56,45 +56,19 @@ const TemplateSeven = ({ resumeData = {}, containerWidth }) => {
           {profileInfo.designation}
         </p>
         {/* Contact row */}
-        <div className="flex justify-center flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500">
-          {contactInfo.email && <span>{contactInfo.email}</span>}
-          {contactInfo.phone && (
-            <>
-              <span className="text-gray-300">|</span>
-              <span>{contactInfo.phone}</span>
-            </>
-          )}
-          {contactInfo.location && (
-            <>
-              <span className="text-gray-300">|</span>
-              <span>{contactInfo.location}</span>
-            </>
-          )}
-          {contactInfo.linkedin && (
-            <>
-              <span className="text-gray-300">|</span>
-              <a href={contactInfo.linkedin} className="hover:text-gray-700">
-                LinkedIn
-              </a>
-            </>
-          )}
-          {contactInfo.github && (
-            <>
-              <span className="text-gray-300">|</span>
-              <a href={contactInfo.github} className="hover:text-gray-700">
-                GitHub
-              </a>
-            </>
-          )}
-          {contactInfo.website && (
-            <>
-              <span className="text-gray-300">|</span>
-              <a href={contactInfo.website} className="hover:text-gray-700">
-                Portfolio
-              </a>
-            </>
-          )}
-        </div>
+        <div className="h-contacts">
+    {contactInfo.email && <span>{contactInfo.email}</span>}
+    {contactInfo.email && contactInfo.phone && <span className="h-sep">|</span>}
+    {contactInfo.phone && <span>{contactInfo.phone}</span>}
+    {contactInfo.phone && contactInfo.location && <span className="h-sep">|</span>}
+    {contactInfo.location && <span>{contactInfo.location}</span>}
+    {contactInfo.location && contactInfo.linkedin && <span className="h-sep">|</span>}
+    {contactInfo.linkedin && <span>LinkedIn</span>}
+    {contactInfo.linkedin && contactInfo.github && <span className="h-sep">|</span>}
+    {contactInfo.github && <span>GitHub</span>}
+    {contactInfo.github && contactInfo.website && <span className="h-sep">|</span>}
+    {contactInfo.website && <span>Portfolio</span>}
+</div>
       </div>
 
       <div className="px-12 py-8">

@@ -188,27 +188,40 @@ const TemplateSix = ({ resumeData = {}, containerWidth }) => {
         {/* Right */}
         <div className="col-span-1 space-y-6">
           {skills.length > 0 && (
-    <Section title="Skills" accent="#0891b2">
-        <div className="space-y-3">
-            {['Languages', 'Frameworks', 'Tools', 'Soft Skills', 'Other'].map(cat => {
-                const items = skills.filter(s => (s.category || 'Other') === cat && s.name);
-                if (!items.length) return null;
-                return (
+            <Section title="Skills" accent="#0891b2">
+              <div className="space-y-3">
+                {[
+                  "Languages",
+                  "Frameworks",
+                  "Tools",
+                  "Soft Skills",
+                  "Other",
+                ].map((cat) => {
+                  const items = skills.filter(
+                    (s) => (s.category || "Other") === cat && s.name,
+                  );
+                  if (!items.length) return null;
+                  return (
                     <div key={cat}>
-                        <p className="text-[9px] font-bold text-cyan-700 uppercase tracking-wide mb-1.5">{cat}</p>
-                        <div className="flex flex-wrap gap-1.5">
-                            {items.map((skill, i) => (
-                                <span key={i} className="text-[10px] bg-cyan-50 text-cyan-700 px-2 py-1 rounded-full font-medium">
-                                    {skill.name}
-                                </span>
-                            ))}
-                        </div>
+                      <p className="text-[9px] font-bold text-cyan-700 uppercase tracking-wide mb-1.5">
+                        {cat}
+                      </p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {items.map((skill, i) => (
+                          <span
+                            key={i}
+                            className="text-[10px] bg-cyan-50 text-cyan-700 px-2 py-1 rounded-full font-medium"
+                          >
+                            {skill.name}
+                          </span>
+                        ))}
+                      </div>
                     </div>
-                );
-            })}
-        </div>
-    </Section>
-)}
+                  );
+                })}
+              </div>
+            </Section>
+          )}
 
           {education.length > 0 && (
             <Section title="Education" accent="#059669">

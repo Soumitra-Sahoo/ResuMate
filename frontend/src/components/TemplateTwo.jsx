@@ -3,7 +3,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { LuExternalLink, LuGithub } from "react-icons/lu";
 import { formatYearMonth } from "../utils/helper";
 
-const sectionTitleClass = "text-base font-bold uppercase tracking-wide mb-1 pb-1 border-b border-gray-300";
+const sectionTitleClass =
+  "text-base font-bold uppercase tracking-wide mb-1 pb-1 border-b border-gray-300";
 
 const TemplateTwo = ({ resumeData = {}, containerWidth }) => {
   const {
@@ -44,27 +45,59 @@ const TemplateTwo = ({ resumeData = {}, containerWidth }) => {
     >
       {/* Header Section */}
       <div className="text-center mb-2">
-        <h1 className="text-2xl font-bold tracking-tight mb-2">{profileInfo.fullName}</h1>
-        <p className="text-sm text-gray-600 font-medium mb-2">{profileInfo.designation}</p>
-        <div className="flex flex-wrap justify-center gap-1 text-[11px] text-gray-700">
+        <h1 className="text-2xl font-bold tracking-tight mb-2">
+          {profileInfo.fullName}
+        </h1>
+        <p className="text-sm text-gray-600 font-medium mb-2">
+          {profileInfo.designation}
+        </p>
+        <div className="flex flex-wrap justify-center gap-x-2 gap-y-1 text-[11px] text-gray-700">
           {contactInfo.phone && <span>{contactInfo.phone}</span>}
+          {contactInfo.phone && contactInfo.email && (
+            <span className="text-gray-300">|</span>
+          )}
           {contactInfo.email && (
-            <a href={`mailto:${contactInfo.email}`} className="hover:underline text-blue-600">
+            <a
+              href={`mailto:${contactInfo.email}`}
+              className="hover:underline text-blue-600"
+            >
               {contactInfo.email}
             </a>
           )}
+          {contactInfo.email && contactInfo.location && (
+            <span className="text-gray-300">|</span>
+          )}
+          {contactInfo.location && <span>{contactInfo.location}</span>}
+          {contactInfo.location && contactInfo.linkedin && (
+            <span className="text-gray-300">|</span>
+          )}
           {contactInfo.linkedin && (
-            <a href={contactInfo.linkedin} className="hover:underline text-blue-600">
+            <a
+              href={contactInfo.linkedin}
+              className="hover:underline text-blue-600"
+            >
               LinkedIn
             </a>
           )}
+          {contactInfo.linkedin && contactInfo.github && (
+            <span className="text-gray-300">|</span>
+          )}
           {contactInfo.github && (
-            <a href={contactInfo.github} className="hover:underline text-blue-600">
+            <a
+              href={contactInfo.github}
+              className="hover:underline text-blue-600"
+            >
               GitHub
             </a>
           )}
+          {contactInfo.github && contactInfo.website && (
+            <span className="text-gray-300">|</span>
+          )}
           {contactInfo.website && (
-            <a href={contactInfo.website} className="hover:underline text-blue-600">
+            <a
+              href={contactInfo.website}
+              className="hover:underline text-blue-600"
+            >
               Portfolio
             </a>
           )}
@@ -77,7 +110,9 @@ const TemplateTwo = ({ resumeData = {}, containerWidth }) => {
       {profileInfo.summary && (
         <section className="mb-2">
           <h2 className={sectionTitleClass}>Summary</h2>
-          <p className="text-[11px] text-gray-800 leading-tight">{profileInfo.summary}</p>
+          <p className="text-[11px] text-gray-800 leading-tight">
+            {profileInfo.summary}
+          </p>
         </section>
       )}
 
@@ -90,14 +125,21 @@ const TemplateTwo = ({ resumeData = {}, containerWidth }) => {
               <div key={idx} className="space-y-0.5">
                 <div className="flex justify-between items-start">
                   <div>
-                    <h3 className="font-semibold text-[12px] pb-2 text-gray-800">{exp.role}</h3>
-                    <p className="italic text-[11px] pb-2 text-gray-600">{exp.company}</p>
+                    <h3 className="font-semibold text-[12px] pb-2 text-gray-800">
+                      {exp.role}
+                    </h3>
+                    <p className="italic text-[11px] pb-2 text-gray-600">
+                      {exp.company}
+                    </p>
                   </div>
                   <div className="text-[11px] text-right text-gray-600">
                     <p className="italic">
-                      {formatYearMonth(exp.startDate)} - {formatYearMonth(exp.endDate)}
+                      {formatYearMonth(exp.startDate)} -{" "}
+                      {formatYearMonth(exp.endDate)}
                     </p>
-                    {exp.location && <p className="text-[11px]">{exp.location}</p>}
+                    {exp.location && (
+                      <p className="text-[11px]">{exp.location}</p>
+                    )}
                   </div>
                 </div>
                 {exp.technologies && (
@@ -107,7 +149,9 @@ const TemplateTwo = ({ resumeData = {}, containerWidth }) => {
                 )}
                 <ul className=" mt-0.5 text-[12px] text-gray-700">
                   {exp.description?.split("\n").map((line, i) => (
-                    <li key={i} className="pb-1">{line}</li>
+                    <li key={i} className="pb-1">
+                      {line}
+                    </li>
                   ))}
                 </ul>
               </div>
@@ -124,9 +168,14 @@ const TemplateTwo = ({ resumeData = {}, containerWidth }) => {
             {projects.map((proj, idx) => (
               <div key={idx} className="space-y-0.5">
                 <div className="flex justify-between items-start">
-                  <h3 className="font-semibold text-[12px] text-gray-800">{proj.title}</h3>
+                  <h3 className="font-semibold text-[12px] text-gray-800">
+                    {proj.title}
+                  </h3>
                   {proj.link && (
-                    <a href={proj.link} className="text-blue-600 text-[11px] hover:underline">
+                    <a
+                      href={proj.link}
+                      className="text-blue-600 text-[11px] hover:underline"
+                    >
                       {proj.linkType || "Link"}
                     </a>
                   )}
@@ -136,15 +185,23 @@ const TemplateTwo = ({ resumeData = {}, containerWidth }) => {
                     {proj.technologies}
                   </p>
                 )}
-                <p className="text-[11px] pb-2 text-gray-700 ">{proj.description}</p>
+                <p className="text-[11px] pb-2 text-gray-700 ">
+                  {proj.description}
+                </p>
                 <div className="flex gap-1 mt-0.5 pt-2 text-[11px]">
                   {proj.github && (
-                    <a href={proj.github} className="flex items-center gap-0.5 hover:underline text-blue-600">
+                    <a
+                      href={proj.github}
+                      className="flex items-center gap-0.5 hover:underline text-blue-600"
+                    >
                       <LuGithub size={10} /> GitHub
                     </a>
                   )}
                   {proj.liveDemo && (
-                    <a href={proj.liveDemo} className="flex items-center gap-0.5 hover:underline text-blue-600">
+                    <a
+                      href={proj.liveDemo}
+                      className="flex items-center gap-0.5 hover:underline text-blue-600"
+                    >
                       <LuExternalLink size={10} /> Demo
                     </a>
                   )}
@@ -163,12 +220,17 @@ const TemplateTwo = ({ resumeData = {}, containerWidth }) => {
             {education.map((edu, idx) => (
               <div key={idx} className="space-y-0.25">
                 <div className="flex justify-between items-center">
-                  <h3 className="font-semibold text-[12px] pb-2 text-gray-800">{edu.degree}</h3>
+                  <h3 className="font-semibold text-[12px] pb-2 text-gray-800">
+                    {edu.degree}
+                  </h3>
                   <p className="italic text-[11px] pb-2 text-gray-600">
-                    {formatYearMonth(edu.startDate)} - {formatYearMonth(edu.endDate)}
+                    {formatYearMonth(edu.startDate)} -{" "}
+                    {formatYearMonth(edu.endDate)}
                   </p>
                 </div>
-                <p className="italic text-[11px] text-gray-700">{edu.institution}</p>
+                <p className="italic text-[11px] text-gray-700">
+                  {edu.institution}
+                </p>
                 {edu.courses && (
                   <p className="text-[11px]">
                     <strong>Courses:</strong> {edu.courses}
@@ -182,36 +244,41 @@ const TemplateTwo = ({ resumeData = {}, containerWidth }) => {
 
       {/* Skills */}
       {skills.length > 0 && (
-    <section className="mb-2">
-        <h2 className={sectionTitleClass}>Skills</h2>
-        <div className="space-y-1.5">
-            {['Languages', 'Frameworks', 'Tools', 'Soft Skills', 'Other'].map(cat => {
-                const items = skills.filter(s => (s.category || 'Other') === cat && s.name);
+        <section className="mb-2">
+          <h2 className={sectionTitleClass}>Skills</h2>
+          <div className="space-y-1.5">
+            {["Languages", "Frameworks", "Tools", "Soft Skills", "Other"].map(
+              (cat) => {
+                const items = skills.filter(
+                  (s) => (s.category || "Other") === cat && s.name,
+                );
                 if (!items.length) return null;
                 return (
-                    <p key={cat} className="text-[11px] text-gray-800">
-                        <span className="font-semibold">{cat}: </span>
-                        {items.map(s => s.name).join(', ')}
-                    </p>
+                  <p key={cat} className="text-[11px] text-gray-800">
+                    <span className="font-semibold">{cat}: </span>
+                    {items.map((s) => s.name).join(", ")}
+                  </p>
                 );
-            })}
-        </div>
-    </section>
-)}
+              },
+            )}
+          </div>
+        </section>
+      )}
 
       {/* Certifications */}
-{certifications.length > 0 && (
-  <section className="mb-2">
-    <h2 className={sectionTitleClass}>Certifications</h2>
-    <ul className="list-disc list-inside text-[11px] text-gray-700">
-      {certifications.map((cert, idx) => (
-        <li key={idx} className="leading-tight">
-          {cert.title} — {cert.issuer}{cert.year ? ` (${cert.year})` : ''}
-        </li>
-      ))}
-    </ul>
-  </section>
-)}
+      {certifications.length > 0 && (
+        <section className="mb-2">
+          <h2 className={sectionTitleClass}>Certifications</h2>
+          <ul className="list-disc list-inside text-[11px] text-gray-700">
+            {certifications.map((cert, idx) => (
+              <li key={idx} className="leading-tight">
+                {cert.title} — {cert.issuer}
+                {cert.year ? ` (${cert.year})` : ""}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {/* Languages & Interests */}
       {(languages.length > 0 || interests.length > 0) && (
@@ -222,7 +289,10 @@ const TemplateTwo = ({ resumeData = {}, containerWidth }) => {
                 <h2 className={sectionTitleClass}>Languages</h2>
                 <ul className="flex flex-wrap gap-1 text-[11px] text-gray-700">
                   {languages.map((lang, idx) => (
-                    <li key={idx} className="bg-gray-100 px-1.5 py-0.5 rounded-full">
+                    <li
+                      key={idx}
+                      className="bg-gray-100 px-1.5 py-0.5 rounded-full"
+                    >
                       {lang.name}
                     </li>
                   ))}
@@ -234,7 +304,10 @@ const TemplateTwo = ({ resumeData = {}, containerWidth }) => {
                 <h2 className={sectionTitleClass}>Interests</h2>
                 <ul className="flex flex-wrap gap-1 text-[11px] text-gray-700">
                   {interests.filter(Boolean).map((int, idx) => (
-                    <li key={idx} className="bg-gray-100 px-1.5 py-0.5 rounded-full">
+                    <li
+                      key={idx}
+                      className="bg-gray-100 px-1.5 py-0.5 rounded-full"
+                    >
                       {int}
                     </li>
                   ))}
