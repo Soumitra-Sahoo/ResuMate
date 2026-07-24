@@ -1,4 +1,4 @@
-# ✨ ResuMate — AI-Powered Full-Stack Resume Builder Platform
+# ResuMate — AI-Powered Full-Stack Resume Builder Platform
 
 ResuMate is a production-ready, AI-powered resume generation platform designed to simplify professional resume creation through an intuitive and responsive user experience. Built using modern full-stack technologies, the platform enables users to generate polished, ATS-friendly resumes with dynamic customization, real-time preview, AI bullet point improvement, ATS scoring, PDF/PNG export, and public sharing — all in one place.
 
@@ -186,7 +186,6 @@ PORT=4000
 ```env
 VITE_API_BASE_URL=https://your-backend-url.vercel.app
 ```
-
 ---
 
 ## 📦 Installation & Running Locally
