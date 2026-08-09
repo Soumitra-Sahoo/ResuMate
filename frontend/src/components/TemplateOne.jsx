@@ -161,7 +161,7 @@ const TemplateOne = ({ resumeData = {}, containerWidth }) => {
                       exp.endDate,
                     )}`}
                     description={exp.description}
-                    durationColor={[2]}
+                    durationColor={DEFAULT_THEME[2]}
                   />
                 ))}
               </div>
@@ -179,8 +179,8 @@ const TemplateOne = ({ resumeData = {}, containerWidth }) => {
                     description={proj.description}
                     githubLink={proj.github}
                     liveDemoUrl={proj.liveDemo}
-                    bgColor={[4]}
-                    headingClass="pb-2" // Added pb-2 to subheadings
+                    bgColor={DEFAULT_THEME[4]}
+                    headingClass="pb-2"
                   />
                 ))}
               </div>
@@ -215,7 +215,7 @@ const TemplateOne = ({ resumeData = {}, containerWidth }) => {
                           <span
                             key={i}
                             className="text-xs font-medium px-2 py-1 rounded"
-                            style={{ backgroundColor: [4] }}
+                            style={{ backgroundColor: DEFAULT_THEME[4] }}
                           >
                             {skill.name}
                           </span>
@@ -257,7 +257,7 @@ const TemplateOne = ({ resumeData = {}, containerWidth }) => {
                     title={cert.title}
                     issuer={cert.issuer}
                     year={cert.year}
-                    bgColor={[4]}
+                    bgColor={DEFAULT_THEME[4]}
                   />
                 ))}
               </div>
@@ -272,7 +272,7 @@ const TemplateOne = ({ resumeData = {}, containerWidth }) => {
                   <span
                     key={i}
                     className="text-xs font-medium px-2 py-1 rounded"
-                    style={{ backgroundColor: [4] }}
+                    style={{ backgroundColor: DEFAULT_THEME[4] }}
                   >
                     {lang.name}
                   </span>
@@ -290,7 +290,7 @@ const TemplateOne = ({ resumeData = {}, containerWidth }) => {
                     <span
                       key={i}
                       className="text-xs font-medium px-2 py-1 rounded"
-                      style={{ backgroundColor: [4] }}
+                      style={{ backgroundColor: DEFAULT_THEME[4] }}
                     >
                       {int}
                     </span>

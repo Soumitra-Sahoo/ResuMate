@@ -16,12 +16,10 @@ const PORT = process.env.PORT || 4000;
 
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    origin: process.env.FRONTEND_URL,
     credentials: true,
   }),
 );
-
-connectDB();
 
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
@@ -44,6 +42,11 @@ app.get("/", (_, res) =>
   res.json({ status: "ok", message: "Backend running" }),
 );
 
-app.listen(PORT, () => console.log(`Backend started on port ${PORT}`));
+const startServer = async () => {
+  await connectDB();
+  app.listen(PORT, () => console.log(`Backend started on port ${PORT}`));
+};
+
+startServer();
 
 export default app;

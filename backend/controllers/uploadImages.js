@@ -3,16 +3,16 @@ import path from 'path'
 import Resume from '../models/resumeModel.js'
 import upload from '../middleware/uploadMiddleware.js'
 
-export const uploadResumeImages = async (req, res) => {
-    try {
-        upload.fields([
-            { name: 'thumbnail', maxCount: 1 },
-            { name: 'profileImage', maxCount: 1 }
-        ])(req, res, async (err) => {
-            if (err) {
-                return res.status(400).json({ message: 'File upload failed', error: err.message })
-            }
+export const uploadResumeImages = (req, res) => {
+    upload.fields([
+        { name: 'thumbnail', maxCount: 1 },
+        { name: 'profileImage', maxCount: 1 }
+    ])(req, res, async (err) => {
+        if (err) {
+            return res.status(400).json({ message: 'File upload failed', error: err.message })
+        }
 
+        try {
             const resumeId = req.params.id
             const resume = await Resume.findOne({ _id: resumeId, userId: req.user._id })
 
@@ -49,9 +49,9 @@ export const uploadResumeImages = async (req, res) => {
                 thumbnailLink: resume.thumbnailLink,
                 profilePreviewUrl: resume.profileInfo?.profilePreviewUrl
             })
-        })
-    } catch (err) {
-        console.error('Error uploading images:', err)
-        res.status(500).json({ message: 'Failed to upload images', error: err.message })
-    }
+        } catch (innerErr) {
+            console.error('Error saving uploaded images:', innerErr)
+            res.status(500).json({ message: 'Failed to save uploaded images', error: innerErr.message })
+        }
+    })
 }
