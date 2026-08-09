@@ -10,6 +10,7 @@ const TemplateThree = ({ resumeData = {}, containerWidth }) => {
     projects = [],
     skills = [],
     certifications = [],
+    languages = [],
     interests = [],
   } = resumeData;
 
@@ -41,22 +42,6 @@ const TemplateThree = ({ resumeData = {}, containerWidth }) => {
       groupedSkills[cat].push(skill.name);
     } else {
       groupedSkills["Other"].push(skill.name);
-    }
-  });
-
-  skills.forEach((skill) => {
-    if (["Selenium/Webdriver", "TestNG", "Jenkins"].includes(skill.name)) {
-      groupedSkills["Automation & Test tools"].push(skill.name);
-    } else if (
-      ["Agile", "Scrum", "JIRA", "Microsoft TFS"].includes(skill.name)
-    ) {
-      groupedSkills["Product Management"].push(skill.name);
-    } else if (
-      ["Python", "Java", "Javascript", "Databases (MySQL)"].includes(skill.name)
-    ) {
-      groupedSkills.Languages.push(skill.name);
-    } else {
-      groupedSkills["Other Skills"].push(skill.name);
     }
   });
 
@@ -163,11 +148,9 @@ const TemplateThree = ({ resumeData = {}, containerWidth }) => {
               ([category, skillsList]) =>
                 skillsList.length > 0 && (
                   <div key={category} className="mb-2">
-                    {category !== "Other Skills" && (
-                      <h3 className="text-xs font-semibold italic mb-1">
-                        {category}:
-                      </h3>
-                    )}
+                    <h3 className="text-xs font-semibold italic mb-1">
+                      {category}:
+                    </h3>
                     <ul className="text-xs text-gray-700">
                       {skillsList.map((skill, idx) => (
                         <li key={idx} className="mb-1">
@@ -210,6 +193,23 @@ const TemplateThree = ({ resumeData = {}, containerWidth }) => {
                     {cert.year ? ` (${cert.year})` : ""}
                   </li>
                 ))}
+              </ul>
+            </section>
+          )}
+
+          {/* Languages — FIX: this section didn't exist before; every other
+              template supports it, TemplateThree silently dropped it. */}
+          {languages.length > 0 && (
+            <section>
+              <h2 className="text-sm font-bold uppercase text-gray-800 mb-2 tracking-wider">
+                LANGUAGES
+              </h2>
+              <ul className="text-xs text-gray-700 space-y-1">
+                {languages
+                  .filter((lang) => lang.name)
+                  .map((lang, idx) => (
+                    <li key={idx}>{lang.name}</li>
+                  ))}
               </ul>
             </section>
           )}
@@ -307,7 +307,10 @@ const TemplateThree = ({ resumeData = {}, containerWidth }) => {
                       )}
                       {proj.technologies && (
                         <span className="text-gray-600">
-                          <strong>Tech:</strong> {proj.technologies.join(", ")}
+                          <strong>Tech:</strong>{" "}
+                          {Array.isArray(proj.technologies)
+                            ? proj.technologies.join(", ")
+                            : proj.technologies}
                         </span>
                       )}
                     </div>

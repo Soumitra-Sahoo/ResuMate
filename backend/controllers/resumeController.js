@@ -3,6 +3,14 @@ import fs from 'fs'
 import path from 'path';
 import crypto from 'crypto';
 
+const RESTRICTED_FIELDS = ['_id', 'userId', 'isPublic', 'shareToken', 'createdAt', 'updatedAt'];
+
+const sanitizeBody = (body = {}) => {
+    const clean = { ...body };
+    RESTRICTED_FIELDS.forEach((field) => delete clean[field]);
+    return clean;
+};
+
 export const createResume = async (req, res) => {
     try {
         const { title } = req.body;
@@ -17,7 +25,13 @@ export const createResume = async (req, res) => {
             languages: [{ name: '', progress: 0 }],
             interests: [''],
         };
-        const newResume = await Resume.create({ userId: req.user._id, title, ...defaultResumeData, ...req.body })
+        const safeBody = sanitizeBody(req.body)
+        const newResume = await Resume.create({
+            userId: req.user._id,
+            title,
+            ...defaultResumeData,
+            ...safeBody,
+        })
         res.status(201).json(newResume)
     } catch (error) {
         res.status(500).json({ message: "Failed to create resume", error: error.message })
@@ -47,7 +61,8 @@ export const updateResume = async (req, res) => {
     try {
         const resume = await Resume.findOne({ _id: req.params.id, userId: req.user._id })
         if (!resume) return res.status(404).json({ message: "Resume not found" })
-        Object.assign(resume, req.body)
+        const safeBody = sanitizeBody(req.body)
+        Object.assign(resume, safeBody)
         const savedResume = await resume.save();
         res.json(savedResume)
     } catch (error) {

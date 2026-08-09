@@ -28,6 +28,8 @@ const ResumeSchema = new mongoose.Schema(
       {
         company: String,
         role: String,
+        location: String, 
+        technologies: String, 
         startDate: String,
         endDate: String,
         description: String,
@@ -37,6 +39,8 @@ const ResumeSchema = new mongoose.Schema(
       {
         degree: String,
         institution: String,
+        location: String, 
+        courses: String,
         startDate: String,
         endDate: String,
       },
@@ -48,7 +52,17 @@ const ResumeSchema = new mongoose.Schema(
       },
     ],
     projects: [
-      { title: String, description: String, github: String, liveDemo: String },
+      {
+        title: String,
+        description: String,
+        github: String,
+        liveDemo: String,
+        link: String, 
+        linkType: String, 
+        technologies: [String],
+        startDate: String,
+        endDate: String,
+      },
     ],
     certifications: [{ title: String, issuer: String, year: String }],
     languages: [{ name: String }],
