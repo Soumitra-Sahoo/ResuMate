@@ -1,10 +1,14 @@
-export const BASE_URL = 'https://resumate-jet-rho.vercel.app'
+export const BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || 'https://resumate-jet-rho.vercel.app'
 
 export const API_PATHS = {
     AUTH: {
         REGISTER: '/api/auth/register',
         LOGIN: '/api/auth/login',
         GET_PROFILE: '/api/auth/profile',
+        UPDATE_PROFILE: '/api/auth/profile',
+        CHANGE_PASSWORD: '/api/auth/change-password',
+        DELETE_ACCOUNT: '/api/auth/account',
     },
     RESUME: {
         CREATE: '/api/resume',
@@ -20,9 +24,10 @@ export const API_PATHS = {
     },
     AI: {
     IMPROVE_BULLET: '/api/ai/improve-bullet',
-    IMPROVE_SUMMARY: '/api/ai/improve-summary', 
-    IMPROVE_PROJECT: '/api/ai/improve-project', 
+    IMPROVE_SUMMARY: '/api/ai/improve-summary',
+    IMPROVE_PROJECT: '/api/ai/improve-project',
     ATS_SCORE: '/api/ai/ats-score',
+    CHAT: '/api/ai/chat',
 },
     IMAGE: {
         UPLOAD_IMAGE: '/api/auth/upload-image'

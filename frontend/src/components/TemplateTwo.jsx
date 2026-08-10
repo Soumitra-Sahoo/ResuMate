@@ -39,8 +39,6 @@ const TemplateTwo = ({ resumeData = {}, containerWidth }) => {
         transform: containerWidth > 0 ? `scale(${scale})` : undefined,
         transformOrigin: "top left",
         width: containerWidth > 0 ? `${baseWidth}px` : undefined,
-        height: "1123px",
-        overflow: "hidden",
       }}
     >
       {/* Header Section */}
@@ -182,7 +180,9 @@ const TemplateTwo = ({ resumeData = {}, containerWidth }) => {
                 </div>
                 {proj.technologies && (
                   <p className="bg-gray-100 pb-2 text-[10px] font-mono px-1.5 py-0.5 rounded inline-block">
-                    {proj.technologies}
+                    {Array.isArray(proj.technologies)
+                      ? proj.technologies.join(", ")
+                      : proj.technologies}
                   </p>
                 )}
                 <p className="text-[11px] pb-2 text-gray-700 ">
