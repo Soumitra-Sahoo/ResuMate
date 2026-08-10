@@ -8,6 +8,11 @@ export const protect = async (req, res, next) => {
             token = token.split(" ")[1];
             const decode = jwt.verify(token, process.env.JWT_SECRET)
             req.user = await User.findById(decode.id).select("-password")
+
+            if (!req.user) {
+                return res.status(401).json({ message: "User no longer exists" })
+            }
+
             next();
         }
         else{
