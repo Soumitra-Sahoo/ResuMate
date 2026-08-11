@@ -141,3 +141,52 @@ Return ONLY the improved description text. No explanations, no quotes, no format
         res.status(500).json({ message: 'AI request failed', error: error.message })
     }
 }
+
+const MAX_HISTORY_MESSAGES = 40
+const MAX_MESSAGE_LENGTH = 4000
+
+export const chatWithAssistant = async (req, res) => {
+    try {
+        const { messages, resumeContext } = req.body
+
+        if (!Array.isArray(messages) || messages.length === 0) {
+            return res.status(400).json({ message: 'messages array is required' })
+        }
+
+        const trimmed = messages.slice(-MAX_HISTORY_MESSAGES).map((m) => ({
+            role: m.role === 'assistant' || m.role === 'model' ? 'model' : 'user',
+            text: String(m.text || '').slice(0, MAX_MESSAGE_LENGTH),
+        }))
+
+        const lastMessage = trimmed[trimmed.length - 1]
+        if (lastMessage.role !== 'user' || !lastMessage.text.trim()) {
+            return res.status(400).json({ message: 'Last message must be a non-empty user message' })
+        }
+
+        const history = trimmed.slice(0, -1).map((m) => ({
+            role: m.role,
+            parts: [{ text: m.text }],
+        }))
+
+        let systemPrompt = `You are the AI Assistant embedded in ResuMate, a resume-building app. Be warm, concise, and practical. Give specific, actionable resume advice — concrete wording suggestions, not vague tips. Keep responses focused and skimmable (short paragraphs or bullet points), since this is a chat UI, not an essay.`
+
+        if (resumeContext) {
+            systemPrompt += `\n\nThe user is currently asking about this resume:\n${buildResumeText(resumeContext)}`
+        }
+
+        const model = getModel()
+        const chat = model.startChat({
+            history: [
+                { role: 'user', parts: [{ text: systemPrompt }] },
+                { role: 'model', parts: [{ text: "Got it — I'm ready to help with your resume. What would you like to work on?" }] },
+                ...history,
+            ],
+        })
+
+        const result = await chat.sendMessage(lastMessage.text)
+        res.json({ reply: result.response.text().trim() })
+    } catch (error) {
+        console.error('Gemini chat error:', error)
+        res.status(500).json({ message: 'AI request failed', error: error.message })
+    }
+}

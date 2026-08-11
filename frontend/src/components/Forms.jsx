@@ -2,22 +2,22 @@
 
 import { useState } from "react";
 import { Input } from "./Input";
-import { RatingInput } from "./ResumeSection";
 import { Plus, Trash2, Sparkles, Loader2 } from "lucide-react";
 import axiosInstance from "../utils/axiosInstance";
 import { API_PATHS } from "../utils/apiPaths";
 import toast from "react-hot-toast";
 import MonthYearPicker from "./MonthYearPicker";
 
-const card = "bg-white border border-gray-100 rounded-2xl p-6 shadow-sm";
-const heading = "text-xl font-black text-slate-800 mb-6";
-const sectionLabel = "block text-sm font-bold text-slate-700 mb-3";
+const card = "bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-2xl p-6 shadow-sm";
+const heading = "text-xl font-black text-slate-800 dark:text-white mb-6";
+const sectionLabel = "block text-sm font-bold text-slate-700 dark:text-gray-300 mb-3";
 const textarea =
-  "w-full text-sm text-slate-700 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 outline-none resize-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 transition-all";
+  "w-full text-sm text-slate-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 outline-none resize-none focus:border-violet-400 dark:focus:border-violet-500 focus:ring-2 focus:ring-violet-100 dark:focus:ring-violet-500/20 transition-all";
 const trashBtn =
-  "flex items-center gap-2 text-xs font-bold text-red-500 hover:text-red-700 border border-red-200 hover:border-red-400 bg-red-50 hover:bg-red-100 px-3 py-2 rounded-xl transition-all";
+  "flex items-center gap-2 text-xs font-bold text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 border border-red-200 dark:border-red-500/30 hover:border-red-400 bg-red-50 dark:bg-red-500/10 hover:bg-red-100 dark:hover:bg-red-500/20 px-3 py-2 rounded-xl transition-all";
 const addBtn =
   "flex items-center gap-2 text-sm font-bold px-5 py-2.5 rounded-xl border-2 border-dashed transition-all";
+const entryCard = "bg-gray-50 dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700 rounded-2xl p-5";
 
 const AIImproveButton = ({
   text,
@@ -74,21 +74,21 @@ const CharCounter = ({ text = "", max = 300, idealMax = 200 }) => {
       <span
         className={`text-xs font-medium ${
           isOverMax
-            ? "text-red-500"
+            ? "text-red-500 dark:text-red-400"
             : isOverIdeal
-              ? "text-amber-500"
-              : "text-gray-400"
+              ? "text-amber-500 dark:text-amber-400"
+              : "text-gray-400 dark:text-gray-500"
         }`}
       >
         {wordCount} words · {charCount}/{max} characters
       </span>
       {isOverMax && (
-        <span className="text-xs font-bold text-red-500">
+        <span className="text-xs font-bold text-red-500 dark:text-red-400">
           Too long for a resume
         </span>
       )}
       {!isOverMax && isOverIdeal && (
-        <span className="text-xs font-medium text-amber-500">
+        <span className="text-xs font-medium text-amber-500 dark:text-amber-400">
           Consider trimming
         </span>
       )}
@@ -145,7 +145,7 @@ export const ProfileInfoForm = ({
           </p>
         )}
         <CharCounter text={profileData.summary} max={400} idealMax={300} />
-        <p className="text-xs text-gray-400 mt-1">
+        <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
           💡 Write a draft first, then click ✨ Improve with AI for a concise,
           punchy version
         </p>
@@ -219,10 +219,7 @@ export const ProjectDetailForm = ({
     <h2 className={heading}>Projects</h2>
     <div className="space-y-6 mb-6">
       {projectInfo.map((project, index) => (
-        <div
-          key={index}
-          className="bg-gray-50 border border-gray-200 rounded-2xl p-5"
-        >
+        <div key={index} className={entryCard}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="md:col-span-2">
               <Input
@@ -277,6 +274,51 @@ export const ProjectDetailForm = ({
                 updateArrayItem(index, "liveDemo", target.value)
               }
             />
+            <Input
+              label="Other Link (optional)"
+              placeholder="https://npmjs.com/package/your-lib"
+              value={project.link || ""}
+              onChange={({ target }) =>
+                updateArrayItem(index, "link", target.value)
+              }
+            />
+            <Input
+              label="Link Label"
+              placeholder="e.g. npm, Docs, Case Study"
+              value={project.linkType || ""}
+              onChange={({ target }) =>
+                updateArrayItem(index, "linkType", target.value)
+              }
+            />
+            <Input
+              label="Technologies (comma separated)"
+              placeholder="React, Node.js, MongoDB"
+              value={
+                Array.isArray(project.technologies)
+                  ? project.technologies.join(", ")
+                  : project.technologies || ""
+              }
+              onChange={({ target }) =>
+                updateArrayItem(
+                  index,
+                  "technologies",
+                  target.value
+                    .split(",")
+                    .map((t) => t.trim())
+                    .filter(Boolean),
+                )
+              }
+            />
+            <MonthYearPicker
+              label="Start Date"
+              value={project.startDate}
+              onChange={(val) => updateArrayItem(index, "startDate", val)}
+            />
+            <MonthYearPicker
+              label="End Date"
+              value={project.endDate}
+              onChange={(val) => updateArrayItem(index, "endDate", val)}
+            />
           </div>
           {projectInfo.length > 1 && (
             <button
@@ -291,9 +333,19 @@ export const ProjectDetailForm = ({
       ))}
       <button
         type="button"
-        className={`${addBtn} border-fuchsia-300 text-fuchsia-600 hover:bg-fuchsia-50 hover:border-fuchsia-500`}
+        className={`${addBtn} border-fuchsia-300 dark:border-fuchsia-500/30 text-fuchsia-600 dark:text-fuchsia-400 hover:bg-fuchsia-50 dark:hover:bg-fuchsia-500/10 hover:border-fuchsia-500`}
         onClick={() =>
-          addArrayItem({ title: "", description: "", github: "", liveDemo: "" })
+          addArrayItem({
+            title: "",
+            description: "",
+            github: "",
+            liveDemo: "",
+            link: "",
+            linkType: "",
+            technologies: [],
+            startDate: "",
+            endDate: "",
+          })
         }
       >
         <Plus size={16} /> Add Project
@@ -312,7 +364,7 @@ export const AdditionalInfoForm = ({
   <div className={card}>
     <h2 className={heading}>Additional Information</h2>
     <div className="mb-10">
-      <h3 className="flex items-center gap-2 text-base font-bold text-slate-700 mb-5">
+      <h3 className="flex items-center gap-2 text-base font-bold text-slate-700 dark:text-gray-200 mb-5">
         <div className="w-2 h-2 rounded-full bg-violet-500" />
         Languages
       </h3>
@@ -341,7 +393,7 @@ export const AdditionalInfoForm = ({
         ))}
         <button
           type="button"
-          className={`${addBtn} border-violet-300 text-violet-600 hover:bg-violet-50 hover:border-violet-500`}
+          className={`${addBtn} border-violet-300 dark:border-violet-500/30 text-violet-600 dark:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-500/10 hover:border-violet-500`}
           onClick={() => addArrayItem("languages", { name: "" })}
         >
           <Plus size={16} /> Add Language
@@ -351,7 +403,7 @@ export const AdditionalInfoForm = ({
 
     {/* Interests */}
     <div>
-      <h3 className="flex items-center gap-2 text-base font-bold text-slate-700 mb-5">
+      <h3 className="flex items-center gap-2 text-base font-bold text-slate-700 dark:text-gray-200 mb-5">
         <div className="w-2 h-2 rounded-full bg-orange-400" />
         Interests
       </h3>
@@ -380,7 +432,7 @@ export const AdditionalInfoForm = ({
         ))}
         <button
           type="button"
-          className={`${addBtn} border-orange-300 text-orange-600 hover:bg-orange-50 hover:border-orange-500`}
+          className={`${addBtn} border-orange-300 dark:border-orange-500/30 text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-500/10 hover:border-orange-500`}
           onClick={() => addArrayItem("interests", "")}
         >
           <Plus size={16} /> Add Interest
@@ -400,10 +452,7 @@ export const CertificationInfoForm = ({
     <h2 className={heading}>Certifications</h2>
     <div className="space-y-6 mb-6">
       {certifications.map((cert, index) => (
-        <div
-          key={index}
-          className="bg-gray-50 border border-gray-200 rounded-2xl p-5"
-        >
+        <div key={index} className={entryCard}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Input
               label="Certificate Title"
@@ -443,7 +492,7 @@ export const CertificationInfoForm = ({
       ))}
       <button
         type="button"
-        className={`${addBtn} border-blue-300 text-blue-600 hover:bg-blue-50 hover:border-blue-500`}
+        className={`${addBtn} border-blue-300 dark:border-blue-500/30 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-500/10 hover:border-blue-500`}
         onClick={() => addArrayItem({ title: "", issuer: "", year: "" })}
       >
         <Plus size={16} /> Add Certification
@@ -462,10 +511,7 @@ export const EducationDetailsForm = ({
     <h2 className={heading}>Education</h2>
     <div className="space-y-6 mb-6">
       {educationInfo.map((edu, index) => (
-        <div
-          key={index}
-          className="bg-gray-50 border border-gray-200 rounded-2xl p-5"
-        >
+        <div key={index} className={entryCard}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Input
               label="Degree"
@@ -493,6 +539,16 @@ export const EducationDetailsForm = ({
               value={edu.endDate}
               onChange={(val) => updateArrayItem(index, "endDate", val)}
             />
+            <div className="md:col-span-2">
+              <Input
+                label="Relevant Courses (optional)"
+                placeholder="Data Structures, Operating Systems, Databases"
+                value={edu.courses || ""}
+                onChange={({ target }) =>
+                  updateArrayItem(index, "courses", target.value)
+                }
+              />
+            </div>
           </div>
           {educationInfo.length > 1 && (
             <button
@@ -507,13 +563,14 @@ export const EducationDetailsForm = ({
       ))}
       <button
         type="button"
-        className={`${addBtn} border-emerald-300 text-emerald-600 hover:bg-emerald-50 hover:border-emerald-500`}
+        className={`${addBtn} border-emerald-300 dark:border-emerald-500/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 hover:border-emerald-500`}
         onClick={() =>
           addArrayItem({
             degree: "",
             institution: "",
             startDate: "",
             endDate: "",
+            courses: "",
           })
         }
       >
@@ -532,11 +589,11 @@ const SKILL_CATEGORIES = [
 ];
 
 const categoryColors = {
-  Languages: "bg-blue-50 border-blue-200 text-blue-700",
-  Frameworks: "bg-violet-50 border-violet-200 text-violet-700",
-  Tools: "bg-emerald-50 border-emerald-200 text-emerald-700",
-  "Soft Skills": "bg-amber-50 border-amber-200 text-amber-700",
-  Other: "bg-gray-50 border-gray-200 text-gray-700",
+  Languages: "bg-blue-50 dark:bg-blue-500/10 border-blue-200 dark:border-blue-500/30 text-blue-700 dark:text-blue-300",
+  Frameworks: "bg-violet-50 dark:bg-violet-500/10 border-violet-200 dark:border-violet-500/30 text-violet-700 dark:text-violet-300",
+  Tools: "bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-300",
+  "Soft Skills": "bg-amber-50 dark:bg-amber-500/10 border-amber-200 dark:border-amber-500/30 text-amber-700 dark:text-amber-300",
+  Other: "bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300",
 };
 
 export const SkillsInfoForm = ({
@@ -560,7 +617,7 @@ export const SkillsInfoForm = ({
         {skillsInfo.map((skill, index) => (
           <div
             key={index}
-            className="flex flex-col md:flex-row md:items-end gap-4 p-4 bg-white border border-gray-200 rounded-2xl shadow-sm hover:border-violet-300 transition-all"
+            className="flex flex-col md:flex-row md:items-end gap-4 p-4 bg-white dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-sm hover:border-violet-300 dark:hover:border-violet-500/50 transition-all"
           >
             <div className="flex-1">
               <label className={`${sectionLabel} mb-2 block`}>Skill Name</label>
@@ -581,7 +638,7 @@ export const SkillsInfoForm = ({
                 onChange={(e) =>
                   updateArrayItem(index, "category", e.target.value)
                 }
-                className="w-full h-12 rounded-xl border border-gray-200 bg-white px-4 text-sm text-slate-700 outline-none transition-all focus:border-violet-400 focus:ring-2 focus:ring-violet-100"
+                className="w-full h-12 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 text-sm text-slate-700 dark:text-gray-200 outline-none transition-all focus:border-violet-400 dark:focus:border-violet-500 focus:ring-2 focus:ring-violet-100 dark:focus:ring-violet-500/20"
               >
                 {SKILL_CATEGORIES.map((cat) => (
                   <option key={cat} value={cat}>
@@ -594,7 +651,7 @@ export const SkillsInfoForm = ({
               <button
                 type="button"
                 onClick={() => removeArrayItem(index)}
-                className="flex items-center justify-center gap-2 h-12 px-5 rounded-xl border border-red-200 text-red-600 hover:bg-red-50 hover:border-red-400 transition-all whitespace-nowrap"
+                className="flex items-center justify-center gap-2 h-12 px-5 rounded-xl border border-red-200 dark:border-red-500/30 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 hover:border-red-400 transition-all whitespace-nowrap"
               >
                 <Trash2 size={16} />
                 Remove
@@ -605,7 +662,7 @@ export const SkillsInfoForm = ({
         <button
           type="button"
           onClick={() => addArrayItem({ name: "", category: "Other" })}
-          className={`${addBtn} mt-3 border-amber-300 text-amber-600 hover:bg-amber-50 hover:border-amber-500`}
+          className={`${addBtn} mt-3 border-amber-300 dark:border-amber-500/30 text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-500/10 hover:border-amber-500`}
         >
           <Plus size={16} />
           Add Skill
@@ -614,8 +671,8 @@ export const SkillsInfoForm = ({
 
       {/* Live grouped preview */}
       {skillsInfo.some((s) => s.name?.trim()) && (
-        <div className="border-t border-gray-100 pt-5">
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">
+        <div className="border-t border-gray-100 dark:border-gray-800 pt-5">
+          <p className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3">
             Preview by Category
           </p>
           <div className="space-y-3">
@@ -623,7 +680,7 @@ export const SkillsInfoForm = ({
               (cat) =>
                 grouped[cat].length > 0 && (
                   <div key={cat} className="flex flex-wrap items-center gap-2">
-                    <span className="text-xs font-bold text-gray-500 w-24 flex-shrink-0">
+                    <span className="text-xs font-bold text-gray-500 dark:text-gray-400 w-24 flex-shrink-0">
                       {cat}
                     </span>
                     <div className="flex flex-wrap gap-1.5">
@@ -656,10 +713,7 @@ export const WorkExperienceForm = ({
     <h2 className={heading}>Work Experience</h2>
     <div className="space-y-6 mb-6">
       {workExperience.map((exp, index) => (
-        <div
-          key={index}
-          className="bg-gray-50 border border-gray-200 rounded-2xl p-5"
-        >
+        <div key={index} className={entryCard}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Input
               label="Company"
@@ -675,6 +729,22 @@ export const WorkExperienceForm = ({
               value={exp.role || ""}
               onChange={({ target }) =>
                 updateArrayItem(index, "role", target.value)
+              }
+            />
+            <Input
+              label="Location (optional)"
+              placeholder="Bengaluru, India"
+              value={exp.location || ""}
+              onChange={({ target }) =>
+                updateArrayItem(index, "location", target.value)
+              }
+            />
+            <Input
+              label="Technologies Used (optional)"
+              placeholder="React, Node.js, AWS"
+              value={exp.technologies || ""}
+              onChange={({ target }) =>
+                updateArrayItem(index, "technologies", target.value)
               }
             />
             <MonthYearPicker
@@ -712,7 +782,7 @@ export const WorkExperienceForm = ({
               }
             />
             <CharCounter text={exp.description} max={500} idealMax={350} />
-            <p className="text-xs text-gray-400 mt-1">
+            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
               💡 Write your raw description first, then use AI to make it
               ATS-friendly
             </p>
@@ -730,11 +800,13 @@ export const WorkExperienceForm = ({
       ))}
       <button
         type="button"
-        className={`${addBtn} border-violet-300 text-violet-600 hover:bg-violet-50 hover:border-violet-500`}
+        className={`${addBtn} border-violet-300 dark:border-violet-500/30 text-violet-600 dark:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-500/10 hover:border-violet-500`}
         onClick={() =>
           addArrayItem({
             company: "",
             role: "",
+            location: "",
+            technologies: "",
             startDate: "",
             endDate: "",
             description: "",

@@ -13,6 +13,67 @@ export function formatYearMonth(yearMonth) {
     return yearMonth ? dayjs(yearMonth, "YYYY-MM").format("MMM YYYY") : "";
 }
 
+export function calculateResumeCompletion(resume = {}) {
+    let done = 0, total = 0
+
+    total += 3
+    if (resume.profileInfo?.fullName) done++
+    if (resume.profileInfo?.designation) done++
+    if (resume.profileInfo?.summary) done++
+
+    total += 2
+    if (resume.contactInfo?.email) done++
+    if (resume.contactInfo?.phone) done++
+
+    resume.workExperience?.forEach((e) => {
+        total += 5
+        if (e.company) done++
+        if (e.role) done++
+        if (e.startDate) done++
+        if (e.endDate) done++
+        if (e.description) done++
+    })
+
+    resume.education?.forEach((e) => {
+        total += 4
+        if (e.degree) done++
+        if (e.institution) done++
+        if (e.startDate) done++
+        if (e.endDate) done++
+    })
+
+    resume.skills?.forEach((s) => {
+        total += 1
+        if (s.name) done++
+    })
+
+    resume.projects?.forEach((p) => {
+        total += 4
+        if (p.title) done++
+        if (p.description) done++
+        if (p.github) done++
+        if (p.liveDemo) done++
+    })
+
+    resume.certifications?.forEach((c) => {
+        total += 3
+        if (c.title) done++
+        if (c.issuer) done++
+        if (c.year) done++
+    })
+
+    resume.languages?.forEach((l) => {
+        total += 1
+        if (l.name) done++
+    })
+
+    total += resume.interests?.length || 0
+    done += resume.interests?.filter((i) => i?.trim() !== "")?.length || 0
+
+    if (total === 0) return 0
+    return Math.round((done / total) * 100)
+}
+
 export function inlineAllComputedStyles(root) {
     const SAFE_PROPS = [
         'color', 'backgroundColor', 'borderColor', 'borderTopColor',
