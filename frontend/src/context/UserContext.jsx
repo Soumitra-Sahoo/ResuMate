@@ -1,4 +1,3 @@
-/* eslint-disable react-refresh/only-export-components */
 import React, { useEffect, useState, createContext } from 'react'
 import axiosInstance from '../utils/axiosInstance'
 import { API_PATHS } from '../utils/apiPaths'
@@ -11,7 +10,6 @@ const UserProvider = ({ children }) => {
 
     useEffect(() => {
         if (user) return
-        // BUG FIX: was 'accessToken', now consistent with 'token'
         const token = localStorage.getItem('token')
         if (!token) { setLoading(false); return }
         const fetchUser = async () => {
@@ -34,13 +32,17 @@ const UserProvider = ({ children }) => {
         setLoading(false)
     }
 
+    const updateUserFields = (partialUserData) => {
+        setUser((prev) => ({ ...prev, ...partialUserData }))
+    }
+
     const clearUser = () => {
         setUser(null)
         localStorage.removeItem('token')
     }
 
     return (
-        <UserContext.Provider value={{ user, loading, updateUser, clearUser }}>
+        <UserContext.Provider value={{ user, loading, updateUser, updateUserFields, clearUser }}>
             {children}
         </UserContext.Provider>
     )

@@ -9,22 +9,22 @@ export const Input = ({ value, onChange, label, placeholder, type = 'text', min,
         <div className="mb-6 group">
             {label && (
                 <label className={`block text-sm font-bold mb-3 transition-colors ${
-                    error ? 'text-red-600' : 'text-gray-800 group-focus-within:text-violet-600'
+                    error ? 'text-red-600' : 'text-gray-800 dark:text-gray-200 group-focus-within:text-violet-600 dark:group-focus-within:text-violet-400'
                 }`}>
                     {label}
                 </label>
             )}
-            <div className={`relative flex items-center bg-gray-50 border-2 px-4 py-3 rounded-xl transition-all duration-300
+            <div className={`relative flex items-center bg-gray-50 dark:bg-gray-800 border-2 px-4 py-3 rounded-xl transition-all duration-300
                 ${error
                     ? 'border-red-400 ring-4 ring-red-500/10'
                     : isFocused
                         ? 'border-violet-500 ring-4 ring-violet-500/20 shadow-lg shadow-violet-500/10'
-                        : 'border-gray-300 hover:border-gray-400'}`}
+                        : 'border-gray-300 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-600'}`}
             >
                 <input
                     type={type === 'password' ? (showPassword ? 'text' : 'password') : type}
                     placeholder={placeholder}
-                    className="w-full bg-transparent outline-none text-gray-800 placeholder-gray-500 font-medium"
+                    className="w-full bg-transparent outline-none text-gray-800 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-500 font-medium"
                     value={value}
                     onChange={onChange}
                     onFocus={() => setIsFocused(true)}
@@ -37,7 +37,7 @@ export const Input = ({ value, onChange, label, placeholder, type = 'text', min,
                     <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="text-gray-500 hover:text-violet-600 transition-colors p-1 rounded-lg hover:bg-gray-100"
+                        className="text-gray-500 dark:text-gray-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
                     >
                         {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                     </button>
@@ -83,8 +83,8 @@ export const ProfilePhotoSelector = ({ image, setImage, preview, setPreview }) =
             <input type="file" accept="image/*" ref={inputRef} onChange={handleImageChange} className="hidden" />
             {!previewUrl ? (
                 <div
-                    className={`relative w-32 h-32 sm:w-36 sm:h-36 flex items-center justify-center bg-gray-50 border-2 border-dashed border-gray-300 rounded-full cursor-pointer transition-all duration-300
-                        ${hovered ? 'border-violet-500 bg-violet-50' : ''}`}
+                    className={`relative w-32 h-32 sm:w-36 sm:h-36 flex items-center justify-center bg-gray-50 dark:bg-gray-800 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-full cursor-pointer transition-all duration-300
+                        ${hovered ? 'border-violet-500 bg-violet-50 dark:bg-violet-500/10' : ''}`}
                     onClick={chooseFile}
                     onMouseEnter={() => setHovered(true)}
                     onMouseLeave={() => setHovered(false)}
@@ -96,7 +96,7 @@ export const ProfilePhotoSelector = ({ image, setImage, preview, setPreview }) =
                 </div>
             ) : (
                 <div className="relative group" onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
-                    <div className={`w-32 h-32 sm:w-36 sm:h-36 rounded-full overflow-hidden border-4 border-gray-200 shadow-lg transition-all duration-300 ${hovered ? 'border-violet-400' : ''}`} onClick={chooseFile}>
+                    <div className={`w-32 h-32 sm:w-36 sm:h-36 rounded-full overflow-hidden border-4 border-gray-200 dark:border-gray-700 shadow-lg transition-all duration-300 ${hovered ? 'border-violet-400' : ''}`} onClick={chooseFile}>
                         <img src={previewUrl} alt="profile" className="w-full h-full object-cover cursor-pointer group-hover:scale-110 transition-transform duration-300" />
                     </div>
                     <div className="absolute inset-0 bg-black/30 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-2">
@@ -124,7 +124,7 @@ export const TitleInput = ({ title, setTitle }) => {
                     <input
                         type="text"
                         placeholder="Resume title"
-                        className={`text-lg sm:text-xl font-bold bg-transparent outline-none text-gray-800 border-b-2 pb-2 transition-all duration-300 ${focused ? 'border-violet-500' : 'border-gray-300'}`}
+                        className={`text-lg sm:text-xl font-bold bg-transparent outline-none text-gray-800 dark:text-gray-100 border-b-2 pb-2 transition-all duration-300 ${focused ? 'border-violet-500' : 'border-gray-300 dark:border-gray-700'}`}
                         value={title}
                         onChange={({ target }) => setTitle(target.value)}
                         onFocus={() => setFocused(true)}
@@ -137,9 +137,9 @@ export const TitleInput = ({ title, setTitle }) => {
                 </>
             ) : (
                 <>
-                    <h2 className="text-lg sm:text-xl font-bold text-gray-800">{title}</h2>
-                    <button className="p-2 rounded-xl bg-gray-100 hover:bg-gray-200 transition-all group" onClick={() => setEditing(true)}>
-                        <Edit className="w-5 h-5 text-gray-600 group-hover:text-violet-600 transition-colors" />
+                    <h2 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-gray-100">{title}</h2>
+                    <button className="p-2 rounded-xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all group" onClick={() => setEditing(true)}>
+                        <Edit className="w-5 h-5 text-gray-600 dark:text-gray-300 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors" />
                     </button>
                 </>
             )}

@@ -3,7 +3,6 @@ import { ChevronLeft, ChevronRight, Calendar } from 'lucide-react'
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
-// value/onChange use "YYYY-MM" format — same as your backend storage
 const MonthYearPicker = ({ value, onChange, label, error }) => {
     const [isOpen, setIsOpen] = useState(false)
     const [viewYear, setViewYear] = useState(
@@ -35,39 +34,39 @@ const MonthYearPicker = ({ value, onChange, label, error }) => {
     return (
         <div className="relative mb-6" ref={ref}>
             {label && (
-                <label className={`block text-sm font-bold mb-3 ${error ? 'text-red-600' : 'text-gray-800'}`}>
+                <label className={`block text-sm font-bold mb-3 ${error ? 'text-red-600' : 'text-gray-800 dark:text-gray-200'}`}>
                     {label}
                 </label>
             )}
             <div
                 onClick={() => setIsOpen(!isOpen)}
-                className={`relative flex items-center justify-between bg-gray-50 border-2 px-4 py-3 rounded-xl cursor-pointer transition-all duration-300
+                className={`relative flex items-center justify-between bg-gray-50 dark:bg-gray-800 border-2 px-4 py-3 rounded-xl cursor-pointer transition-all duration-300
                     ${error ? 'border-red-400 ring-4 ring-red-500/10'
                         : isOpen ? 'border-violet-500 ring-4 ring-violet-500/20'
-                        : 'border-gray-300 hover:border-gray-400'}`}
+                        : 'border-gray-300 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-600'}`}
             >
-                <span className={displayValue ? 'text-gray-800 font-medium' : 'text-gray-400'}>
+                <span className={displayValue ? 'text-gray-800 dark:text-gray-100 font-medium' : 'text-gray-400 dark:text-gray-500'}>
                     {displayValue || 'Select month & year'}
                 </span>
-                <Calendar size={18} className="text-gray-400" />
+                <Calendar size={18} className="text-gray-400 dark:text-gray-500" />
             </div>
 
             {isOpen && (
-                <div className="absolute z-50 mt-2 w-full bg-white border border-gray-200 rounded-2xl shadow-xl p-4">
+                <div className="absolute z-50 mt-2 w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-xl p-4">
                     {/* Year navigator */}
                     <div className="flex items-center justify-between mb-4">
                         <button
                             type="button"
                             onClick={() => setViewYear(y => y - 1)}
-                            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-all"
+                            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-all text-gray-700 dark:text-gray-200"
                         >
                             <ChevronLeft size={16} />
                         </button>
-                        <span className="font-bold text-gray-800">{viewYear}</span>
+                        <span className="font-bold text-gray-800 dark:text-gray-100">{viewYear}</span>
                         <button
                             type="button"
                             onClick={() => setViewYear(y => y + 1)}
-                            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-all"
+                            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-all text-gray-700 dark:text-gray-200"
                         >
                             <ChevronRight size={16} />
                         </button>
@@ -85,7 +84,7 @@ const MonthYearPicker = ({ value, onChange, label, error }) => {
                                     className={`py-2 rounded-xl text-sm font-medium transition-all
                                         ${isSelected
                                             ? 'bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white shadow-md'
-                                            : 'text-gray-600 hover:bg-violet-50 hover:text-violet-600'}`}
+                                            : 'text-gray-600 dark:text-gray-300 hover:bg-violet-50 dark:hover:bg-violet-500/10 hover:text-violet-600 dark:hover:text-violet-400'}`}
                                 >
                                     {month}
                                 </button>
@@ -100,7 +99,7 @@ const MonthYearPicker = ({ value, onChange, label, error }) => {
                             onChange(`${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`)
                             setIsOpen(false)
                         }}
-                        className="w-full mt-3 py-2 text-xs font-bold text-violet-600 hover:bg-violet-50 rounded-xl transition-all"
+                        className="w-full mt-3 py-2 text-xs font-bold text-violet-600 dark:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-500/10 rounded-xl transition-all"
                     >
                         Set to Present
                     </button>

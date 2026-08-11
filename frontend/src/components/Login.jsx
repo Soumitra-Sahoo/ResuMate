@@ -32,10 +32,10 @@ const Login = ({ setCurrentPage }) => {
     }
 
     return (
-        <div className="w-[90vw] md:w-[400px] p-8 bg-gradient-to-br from-white to-violet-50 rounded-3xl border border-violet-100 shadow-2xl">
+        <div className="w-[90vw] md:w-[400px] p-8 bg-gradient-to-br from-white to-violet-50 dark:from-gray-900 dark:to-violet-950/30 rounded-3xl border border-violet-100 dark:border-violet-500/20 shadow-2xl">
             <div className="text-center mb-8">
-                <h3 className="text-2xl font-black text-slate-900 mb-2">Welcome Back</h3>
-                <p className="text-slate-600 font-medium">Sign in to continue building amazing resumes</p>
+                <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-2">Welcome Back</h3>
+                <p className="text-slate-600 dark:text-gray-400 font-medium">Sign in to continue building amazing resumes</p>
             </div>
             <form onSubmit={handleLogin} className="space-y-6">
                 <Input value={email} onChange={({ target }) => setEmail(target.value)}
@@ -43,18 +43,18 @@ const Login = ({ setCurrentPage }) => {
                 <Input value={password} onChange={({ target }) => setPassword(target.value)}
                     label="Password" placeholder="Min 6 characters" type="password" />
                 {error && (
-                    <div className="text-red-500 text-sm font-medium bg-red-50 border border-red-200 px-4 py-3 rounded-xl">
+                    <div className="text-red-500 text-sm font-medium bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 px-4 py-3 rounded-xl">
                         {error}
                     </div>
                 )}
                 <button type="submit"
-                    className="w-full py-4 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white font-black rounded-2xl hover:scale-105 hover:shadow-xl hover:shadow-violet-200 transition-all text-lg">
+                    className="w-full py-4 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white font-black rounded-2xl hover:scale-105 hover:shadow-xl hover:shadow-violet-200 dark:hover:shadow-none transition-all text-lg">
                     Sign In
                 </button>
-                <p className="text-center text-sm text-slate-600 font-medium">
+                <p className="text-center text-sm text-slate-600 dark:text-gray-400 font-medium">
                     Don't have an account?{' '}
                     <button onClick={() => setCurrentPage('signup')} type="button"
-                        className="font-black text-violet-600 hover:text-fuchsia-600 transition-colors">
+                        className="font-black text-violet-600 dark:text-violet-400 hover:text-fuchsia-600 transition-colors">
                         Sign Up
                     </button>
                 </p>

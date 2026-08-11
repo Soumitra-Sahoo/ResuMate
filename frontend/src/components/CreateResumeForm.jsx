@@ -4,9 +4,9 @@ import { useNavigate } from 'react-router-dom'
 import axiosInstance from '../utils/axiosInstance'
 import { API_PATHS } from '../utils/apiPaths'
 
-const CreateResumeForm = () => {
+const CreateResumeForm = ({ onSuccess } = {}) => {
   const [title, setTitle] = useState('')
-  const [error, setError] = useState(null)
+  const [error, setError] = useState('')
   const navigate = useNavigate()
 
   const handleCreateResume = async (e) => {
@@ -21,6 +21,7 @@ const CreateResumeForm = () => {
         title,
       })
       if (response.data?._id) {
+        onSuccess?.(response.data)
         navigate(`/resume/${response.data._id}`)
       }
     } catch (error) {
@@ -33,9 +34,9 @@ const CreateResumeForm = () => {
   }
 
   return (
-    <div className="w-full max-w-md p-8 bg-white rounded-2xl border border-gray-100 shadow-lg">
-      <h3 className="text-2xl font-bold text-gray-900 mb-2">Create New Resume</h3>
-      <p className="text-gray-600 mb-2">
+    <div className="w-full max-w-md p-8 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-lg">
+      <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Create New Resume</h3>
+      <p className="text-gray-600 dark:text-gray-400 mb-2">
         Give your resume a title to get started. You can always edit it later.
       </p>
 

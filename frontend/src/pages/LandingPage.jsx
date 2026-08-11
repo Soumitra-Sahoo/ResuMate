@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { FileUser, X, Menu, ArrowRight, Zap, LayoutTemplate, Download, Star, Users, Clock, CheckCircle } from 'lucide-react'
+import { FileUser, X, Menu, ArrowRight, Zap, LayoutTemplate, Download, Star, Users, CheckCircle } from 'lucide-react'
 import { ProfileInfoCard } from '../components/Cards.jsx'
 import { UserContext } from '../context/UserContext.jsx'
 import Modal from '../components/Modal.jsx'
@@ -11,12 +11,12 @@ import SignUp from '../components/SignUp.jsx'
 const FeatureCard = ({ icon, title, description, iconGradient, cardGradient, delay }) => (
     <div className="group relative" style={{ animationDelay: delay }}>
         <div className={`absolute -inset-2 bg-gradient-to-r opacity-0 group-hover:opacity-100 transition-all duration-500 blur-xl rounded-3xl ${cardGradient}`} />
-        <div className={`relative bg-gradient-to-br ${cardGradient} border border-white/50 p-6 sm:p-8 rounded-3xl hover:shadow-2xl transition-all duration-500 group-hover:scale-105 h-full`}>
+        <div className={`relative bg-gradient-to-br ${cardGradient} dark:from-gray-900 dark:to-gray-900 border border-white/50 dark:border-gray-800 p-6 sm:p-8 rounded-3xl hover:shadow-2xl transition-all duration-500 group-hover:scale-105 h-full`}>
             <div className={`w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br ${iconGradient} rounded-2xl flex items-center justify-center mb-4 sm:mb-6 text-white shadow-lg`}>
                 {icon}
             </div>
-            <h3 className="text-xl sm:text-2xl font-black text-slate-900 mb-2 sm:mb-4">{title}</h3>
-            <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-medium">{description}</p>
+            <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white mb-2 sm:mb-4">{title}</h3>
+            <p className="text-sm sm:text-base text-slate-600 dark:text-gray-400 leading-relaxed font-medium">{description}</p>
         </div>
     </div>
 )
@@ -171,14 +171,14 @@ const LandingPage = () => {
     ]
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50">
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50 dark:from-gray-950 dark:via-gray-950 dark:to-gray-950">
 
             {/* ── Header ─────────────────────────────────────────────────────── */}
-            <header className="fixed top-0 w-full z-50 bg-white/70 backdrop-blur-xl border-b border-violet-100/50">
+            <header className="fixed top-0 w-full z-50 bg-white/70 dark:bg-gray-950/80 backdrop-blur-xl border-b border-violet-100/50 dark:border-gray-800">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
                     {/* Logo */}
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-gradient-to-br from-violet-600 to-fuchsia-600 rounded-2xl flex items-center justify-center shadow-lg shadow-violet-200">
+                        <div className="w-10 h-10 bg-gradient-to-br from-violet-600 to-fuchsia-600 rounded-2xl flex items-center justify-center shadow-lg shadow-violet-200 dark:shadow-none">
                             <FileUser className="w-5 h-5 text-white" />
                         </div>
                         <span className="text-xl sm:text-2xl font-black bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
@@ -187,11 +187,11 @@ const LandingPage = () => {
                     </div>
 
                     {/* Mobile menu button */}
-                    <button className="md:hidden p-2 rounded-xl hover:bg-violet-50 transition-colors"
+                    <button className="md:hidden p-2 rounded-xl hover:bg-violet-50 dark:hover:bg-gray-900 transition-colors"
                         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
                         {mobileMenuOpen
-                            ? <X size={24} className="text-violet-600" />
-                            : <Menu size={24} className="text-violet-600" />}
+                            ? <X size={24} className="text-violet-600 dark:text-violet-400" />
+                            : <Menu size={24} className="text-violet-600 dark:text-violet-400" />}
                     </button>
 
                     {/* Desktop nav */}
@@ -200,7 +200,7 @@ const LandingPage = () => {
                             <>
                                 <button
                                     onClick={() => navigate('/dashboard')}
-                                    className="px-6 py-2 text-violet-700 font-bold hover:bg-violet-50 rounded-xl transition-all"
+                                    className="px-6 py-2 text-violet-700 dark:text-violet-400 font-bold hover:bg-violet-50 dark:hover:bg-gray-900 rounded-xl transition-all"
                                 >
                                     Dashboard
                                 </button>
@@ -210,13 +210,13 @@ const LandingPage = () => {
                             <div className="flex items-center gap-3">
                                 <button
                                     onClick={() => { setCurrentPage('login'); setOpenAuthModal(true) }}
-                                    className="px-6 py-2 text-violet-700 font-bold hover:bg-violet-50 rounded-xl transition-all"
+                                    className="px-6 py-2 text-violet-700 dark:text-violet-400 font-bold hover:bg-violet-50 dark:hover:bg-gray-900 rounded-xl transition-all"
                                 >
                                     Sign In
                                 </button>
                                 <button
                                     onClick={() => { setCurrentPage('signup'); setOpenAuthModal(true) }}
-                                    className="relative group px-6 sm:px-8 py-2 sm:py-3 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white font-bold rounded-2xl overflow-hidden transition-all hover:scale-105 hover:shadow-xl hover:shadow-violet-200"
+                                    className="relative group px-6 sm:px-8 py-2 sm:py-3 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white font-bold rounded-2xl overflow-hidden transition-all hover:scale-105 hover:shadow-xl hover:shadow-violet-200 dark:hover:shadow-none"
                                 >
                                     <div className="absolute inset-0 bg-gradient-to-r from-fuchsia-600 to-violet-600 opacity-0 group-hover:opacity-100 transition-opacity" />
                                     <span className="relative">Get Started</span>
@@ -228,11 +228,11 @@ const LandingPage = () => {
 
                 {/* Mobile menu */}
                 {mobileMenuOpen && (
-                    <div className="md:hidden bg-white/95 backdrop-blur-lg w-full border-b border-violet-100/50 shadow-lg">
+                    <div className="md:hidden bg-white/95 dark:bg-gray-950/95 backdrop-blur-lg w-full border-b border-violet-100/50 dark:border-gray-800 shadow-lg">
                         <div className="max-w-6xl mx-auto px-4 py-4 flex flex-col gap-3">
                             {user ? (
                                 <>
-                                    <p className="text-violet-700 font-medium text-center py-2">
+                                    <p className="text-violet-700 dark:text-violet-400 font-medium text-center py-2">
                                         Welcome back, {user.name}!
                                     </p>
                                     <button
@@ -245,7 +245,7 @@ const LandingPage = () => {
                             ) : (
                                 <>
                                     <button
-                                        className="w-full px-6 py-3 border-2 border-violet-200 text-violet-700 font-bold rounded-xl"
+                                        className="w-full px-6 py-3 border-2 border-violet-200 dark:border-violet-500/30 text-violet-700 dark:text-violet-400 font-bold rounded-xl"
                                         onClick={() => { setCurrentPage('login'); setOpenAuthModal(true); setMobileMenuOpen(false) }}
                                     >
                                         Sign In
@@ -269,27 +269,27 @@ const LandingPage = () => {
                     <div className="flex flex-wrap justify-between gap-10 lg:gap-12 items-center">
                         {/* Left */}
                         <div className={`space-y-8 flex-1 min-w-[280px] transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-                            <div className="inline-flex items-center gap-2 sm:gap-3 px-4 py-2 bg-gradient-to-r from-violet-100 to-fuchsia-100 border border-violet-200 text-violet-700 rounded-full font-bold text-xs sm:text-sm">
+                            <div className="inline-flex items-center gap-2 sm:gap-3 px-4 py-2 bg-gradient-to-r from-violet-100 to-fuchsia-100 dark:from-violet-500/10 dark:to-fuchsia-500/10 border border-violet-200 dark:border-violet-500/20 text-violet-700 dark:text-violet-300 rounded-full font-bold text-xs sm:text-sm">
                                 <Zap size={14} className="text-violet-500" />
                                 AI-Powered Professional Resume Builder
                             </div>
 
                             <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black leading-tight">
-                                <span className="block text-slate-900">Craft</span>
+                                <span className="block text-slate-900 dark:text-white">Craft</span>
                                 <span className="block bg-gradient-to-r from-violet-600 via-fuchsia-600 to-orange-500 bg-clip-text text-transparent">
                                     Professional
                                 </span>
-                                <span className="block text-slate-900">Resumes</span>
+                                <span className="block text-slate-900 dark:text-white">Resumes</span>
                             </h1>
 
-                            <p className="text-base sm:text-lg lg:text-xl text-slate-600 leading-relaxed max-w-lg font-medium">
+                            <p className="text-base sm:text-lg lg:text-xl text-slate-600 dark:text-gray-400 leading-relaxed max-w-lg font-medium">
                                 Create job-winning resumes with AI-powered templates.
                                 ATS-friendly, recruiter-approved, and tailored to your career goals.
                             </p>
 
                             <div className="flex flex-col sm:flex-row gap-4">
                                 <button
-                                    className="group relative px-10 py-4 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white font-bold rounded-2xl overflow-hidden transition-all hover:scale-105 hover:shadow-2xl hover:shadow-violet-200"
+                                    className="group relative px-10 py-4 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white font-bold rounded-2xl overflow-hidden transition-all hover:scale-105 hover:shadow-2xl hover:shadow-violet-200 dark:hover:shadow-none"
                                     onClick={handleCTA}
                                 >
                                     <div className="absolute inset-0 bg-gradient-to-r from-fuchsia-600 to-orange-500 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -299,7 +299,7 @@ const LandingPage = () => {
                                     </span>
                                 </button>
                                 <button
-                                    className="px-8 sm:px-10 py-3 sm:py-4 border-2 border-violet-200 text-violet-700 font-bold rounded-2xl hover:border-violet-400 hover:bg-violet-50 transition-all"
+                                    className="px-8 sm:px-10 py-3 sm:py-4 border-2 border-violet-200 dark:border-violet-500/30 text-violet-700 dark:text-violet-400 font-bold rounded-2xl hover:border-violet-400 hover:bg-violet-50 dark:hover:bg-violet-500/10 transition-all"
                                     onClick={handleCTA}
                                 >
                                     View Templates →
@@ -313,7 +313,7 @@ const LandingPage = () => {
                                         <div className={`text-2xl sm:text-3xl font-black bg-gradient-to-r ${stat.gradient} bg-clip-text text-transparent`}>
                                             {stat.value}
                                         </div>
-                                        <div className="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">{stat.label}</div>
+                                        <div className="text-xs sm:text-sm text-slate-500 dark:text-gray-400 font-medium mt-0.5">{stat.label}</div>
                                     </div>
                                 ))}
                             </div>
@@ -321,26 +321,26 @@ const LandingPage = () => {
 
                         {/* Right — animated illustration */}
                         <div className={`relative w-full max-w-sm sm:max-w-md lg:max-w-lg mx-auto flex-1 min-w-[280px] transition-all duration-700 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-                            <div className="absolute -inset-8 bg-gradient-to-r from-violet-200/50 to-fuchsia-200/50 rounded-3xl blur-3xl" />
+                            <div className="absolute -inset-8 bg-gradient-to-r from-violet-200/50 to-fuchsia-200/50 dark:from-violet-500/10 dark:to-fuchsia-500/10 rounded-3xl blur-3xl" />
                             <div className="relative">
                                 <ResumeIllustration />
                                 {/* Floating info cards */}
-                                <div className="absolute -left-4 top-1/4 bg-white rounded-2xl shadow-xl p-3 flex items-center gap-2 border border-violet-100 animate-bounce">
-                                    <div className="w-8 h-8 bg-emerald-100 rounded-xl flex items-center justify-center">
-                                        <CheckCircle size={16} className="text-emerald-600" />
+                                <div className="absolute -left-4 top-1/4 bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-3 flex items-center gap-2 border border-violet-100 dark:border-gray-800 animate-bounce">
+                                    <div className="w-8 h-8 bg-emerald-100 dark:bg-emerald-500/10 rounded-xl flex items-center justify-center">
+                                        <CheckCircle size={16} className="text-emerald-600 dark:text-emerald-400" />
                                     </div>
                                     <div>
-                                        <p className="text-xs font-black text-gray-800">ATS Score</p>
-                                        <p className="text-xs text-emerald-600 font-bold">92/100</p>
+                                        <p className="text-xs font-black text-gray-800 dark:text-gray-100">ATS Score</p>
+                                        <p className="text-xs text-emerald-600 dark:text-emerald-400 font-bold">92/100</p>
                                     </div>
                                 </div>
-                                <div className="absolute -right-4 bottom-1/4 bg-white rounded-2xl shadow-xl p-3 flex items-center gap-2 border border-fuchsia-100">
-                                    <div className="w-8 h-8 bg-violet-100 rounded-xl flex items-center justify-center">
-                                        <Zap size={16} className="text-violet-600" />
+                                <div className="absolute -right-4 bottom-1/4 bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-3 flex items-center gap-2 border border-fuchsia-100 dark:border-gray-800">
+                                    <div className="w-8 h-8 bg-violet-100 dark:bg-violet-500/10 rounded-xl flex items-center justify-center">
+                                        <Zap size={16} className="text-violet-600 dark:text-violet-400" />
                                     </div>
                                     <div>
-                                        <p className="text-xs font-black text-gray-800">AI Improved</p>
-                                        <p className="text-xs text-violet-600 font-bold">Just now ✨</p>
+                                        <p className="text-xs font-black text-gray-800 dark:text-gray-100">AI Improved</p>
+                                        <p className="text-xs text-violet-600 dark:text-violet-400 font-bold">Just now ✨</p>
                                     </div>
                                 </div>
                             </div>
@@ -349,19 +349,19 @@ const LandingPage = () => {
                 </section>
 
                 {/* ── Features Section ────────────────────────────────────────── */}
-                <section className="bg-gradient-to-br from-violet-50 to-fuchsia-50 py-16 sm:py-24">
+                <section className="bg-gradient-to-br from-violet-50 to-fuchsia-50 dark:from-gray-900 dark:to-gray-900 py-16 sm:py-24">
                     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="text-center mb-12 sm:mb-16">
-                            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-violet-200 text-violet-700 rounded-full font-bold text-sm mb-6">
+                            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-950 border border-violet-200 dark:border-violet-500/20 text-violet-700 dark:text-violet-300 rounded-full font-bold text-sm mb-6">
                                 <Star size={14} className="text-amber-500" /> Why 10,000+ professionals choose us
                             </div>
-                            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 mb-4 sm:mb-6">
+                            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white mb-4 sm:mb-6">
                                 Why Choose{' '}
                                 <span className="bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
                                     ResuMate?
                                 </span>
                             </h2>
-                            <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto font-medium">
+                            <p className="text-base sm:text-lg text-slate-600 dark:text-gray-400 max-w-2xl mx-auto font-medium">
                                 Everything you need to create a professional resume that stands out
                             </p>
                         </div>
@@ -378,7 +378,7 @@ const LandingPage = () => {
                 <section className="py-16 sm:py-24">
                     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="text-center mb-12">
-                            <h2 className="text-3xl sm:text-4xl font-black text-slate-900 mb-4">
+                            <h2 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white mb-4">
                                 Ready in{' '}
                                 <span className="bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
                                     3 Simple Steps
@@ -391,14 +391,14 @@ const LandingPage = () => {
                                 { step: '02', title: 'Pick a Template', desc: 'Choose from 7 professional templates and customize with AI-powered suggestions.', color: 'fuchsia' },
                                 { step: '03', title: 'Download & Share', desc: 'Export as PDF, share with a public link, or check your ATS compatibility score.', color: 'orange' },
                             ].map((item, i) => (
-                                <div key={i} className="relative text-center p-8 bg-white rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl transition-all hover:-translate-y-1">
-                                    <div className={`text-6xl font-black bg-gradient-to-r ${i === 0 ? 'from-violet-200 to-violet-300' : i === 1 ? 'from-fuchsia-200 to-fuchsia-300' : 'from-orange-200 to-orange-300'} bg-clip-text text-transparent mb-4`}>
+                                <div key={i} className="relative text-center p-8 bg-white dark:bg-gray-900 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-xl transition-all hover:-translate-y-1">
+                                    <div className={`text-6xl font-black bg-gradient-to-r ${i === 0 ? 'from-violet-200 to-violet-300 dark:from-violet-500/40 dark:to-violet-500/20' : i === 1 ? 'from-fuchsia-200 to-fuchsia-300 dark:from-fuchsia-500/40 dark:to-fuchsia-500/20' : 'from-orange-200 to-orange-300 dark:from-orange-500/40 dark:to-orange-500/20'} bg-clip-text text-transparent mb-4`}>
                                         {item.step}
                                     </div>
-                                    <h3 className="text-xl font-black text-slate-900 mb-3">{item.title}</h3>
-                                    <p className="text-slate-600 font-medium leading-relaxed">{item.desc}</p>
+                                    <h3 className="text-xl font-black text-slate-900 dark:text-white mb-3">{item.title}</h3>
+                                    <p className="text-slate-600 dark:text-gray-400 font-medium leading-relaxed">{item.desc}</p>
                                     {i < 2 && (
-                                        <div className="hidden md:block absolute -right-4 top-1/2 -translate-y-1/2 z-10 text-2xl text-gray-300">→</div>
+                                        <div className="hidden md:block absolute -right-4 top-1/2 -translate-y-1/2 z-10 text-2xl text-gray-300 dark:text-gray-700">→</div>
                                     )}
                                 </div>
                             ))}
@@ -407,22 +407,22 @@ const LandingPage = () => {
                 </section>
 
                 {/* ── CTA Section ─────────────────────────────────────────────── */}
-                <section className="py-16 sm:py-24 bg-gradient-to-br from-violet-50 to-fuchsia-50">
+                <section className="py-16 sm:py-24 bg-gradient-to-br from-violet-50 to-fuchsia-50 dark:from-gray-900 dark:to-gray-900">
                     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                         <div className="relative">
-                            <div className="absolute -inset-6 sm:-inset-8 bg-gradient-to-r from-violet-200/50 to-fuchsia-200/50 rounded-3xl blur-3xl" />
-                            <div className="relative bg-gradient-to-br from-white to-violet-50 border border-violet-100 rounded-3xl p-8 sm:p-16">
-                                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 mb-4 sm:mb-6">
+                            <div className="absolute -inset-6 sm:-inset-8 bg-gradient-to-r from-violet-200/50 to-fuchsia-200/50 dark:from-violet-500/10 dark:to-fuchsia-500/10 rounded-3xl blur-3xl" />
+                            <div className="relative bg-gradient-to-br from-white to-violet-50 dark:from-gray-950 dark:to-gray-950 border border-violet-100 dark:border-gray-800 rounded-3xl p-8 sm:p-16">
+                                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white mb-4 sm:mb-6">
                                     Ready to Build Your{' '}
                                     <span className="bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
                                         Standout Resume?
                                     </span>
                                 </h2>
-                                <p className="text-base sm:text-lg text-slate-600 mb-6 sm:mb-10 max-w-2xl mx-auto font-medium">
+                                <p className="text-base sm:text-lg text-slate-600 dark:text-gray-400 mb-6 sm:mb-10 max-w-2xl mx-auto font-medium">
                                     Join thousands of professionals who landed their dream jobs with ResuMate
                                 </p>
                                 <button
-                                    className="group relative px-8 sm:px-12 py-3 sm:py-5 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white font-black text-lg rounded-2xl overflow-hidden transition-all hover:scale-105 hover:shadow-2xl hover:shadow-violet-200"
+                                    className="group relative px-8 sm:px-12 py-3 sm:py-5 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white font-black text-lg rounded-2xl overflow-hidden transition-all hover:scale-105 hover:shadow-2xl hover:shadow-violet-200 dark:hover:shadow-none"
                                     onClick={handleCTA}
                                 >
                                     <div className="absolute inset-0 bg-gradient-to-r from-fuchsia-600 to-orange-500 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -438,9 +438,9 @@ const LandingPage = () => {
             </main>
 
             {/* ── Footer ─────────────────────────────────────────────────────── */}
-            <footer className="border-t border-violet-100 bg-gradient-to-r from-violet-50 to-fuchsia-50 py-6 sm:py-8">
+            <footer className="border-t border-violet-100 dark:border-gray-800 bg-gradient-to-r from-violet-50 to-fuchsia-50 dark:from-gray-950 dark:to-gray-950 py-6 sm:py-8">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <p className="text-sm sm:text-base text-slate-500 font-medium">
+                    <p className="text-sm sm:text-base text-slate-500 dark:text-gray-400 font-medium">
                         Crafted with{' '}
                         <span className="bg-gradient-to-r from-red-500 to-pink-500 bg-clip-text text-transparent">❤️</span>
                         {' '}by{' '}

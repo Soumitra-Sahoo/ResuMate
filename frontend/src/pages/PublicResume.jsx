@@ -26,10 +26,10 @@ const PublicResume = () => {
     }, [token])
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-fuchsia-50">
+        <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-fuchsia-50 dark:from-gray-950 dark:via-gray-950 dark:to-gray-950">
 
             {/* Top bar */}
-            <div className="h-14 bg-white/80 backdrop-blur-xl border-b border-violet-100 flex items-center justify-between px-6 sticky top-0 z-10">
+            <div className="h-14 bg-white/80 dark:bg-gray-950/80 backdrop-blur-xl border-b border-violet-100 dark:border-gray-800 flex items-center justify-between px-6 sticky top-0 z-10">
                 <Link to="/" className="flex items-center gap-2">
                     <div className="w-8 h-8 bg-gradient-to-r from-violet-600 to-fuchsia-600 rounded-xl flex items-center justify-center shadow-md">
                         <LayoutTemplate className="w-4 h-4 text-white" />
@@ -38,7 +38,7 @@ const PublicResume = () => {
                         ResuMate
                     </span>
                 </Link>
-                <div className="flex items-center gap-2 text-xs font-medium text-gray-500 bg-gray-100 px-3 py-1.5 rounded-full">
+                <div className="flex items-center gap-2 text-xs font-medium text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-900 px-3 py-1.5 rounded-full">
                     <div className="w-2 h-2 rounded-full bg-emerald-500" />
                     Read-only view
                 </div>
@@ -48,17 +48,17 @@ const PublicResume = () => {
                 {loading && (
                     <div className="flex flex-col items-center justify-center py-24 gap-4">
                         <Loader2 size={36} className="animate-spin text-violet-600" />
-                        <p className="text-gray-500 font-medium">Loading resume…</p>
+                        <p className="text-gray-500 dark:text-gray-400 font-medium">Loading resume…</p>
                     </div>
                 )}
 
                 {error && (
                     <div className="flex flex-col items-center justify-center py-24 gap-4 text-center">
-                        <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center">
+                        <div className="w-16 h-16 rounded-full bg-red-100 dark:bg-red-500/10 flex items-center justify-center">
                             <AlertCircle size={32} className="text-red-500" />
                         </div>
-                        <h2 className="text-xl font-bold text-gray-900">Resume Not Found</h2>
-                        <p className="text-gray-500 max-w-md">{error}</p>
+                        <h2 className="text-xl font-bold text-gray-900 dark:text-white">Resume Not Found</h2>
+                        <p className="text-gray-500 dark:text-gray-400 max-w-md">{error}</p>
                         <Link to="/" className="mt-2 px-6 py-2 bg-violet-600 text-white font-bold rounded-xl hover:bg-violet-700 transition-all">
                             Go to ResuMate
                         </Link>
@@ -68,10 +68,10 @@ const PublicResume = () => {
                 {!loading && !error && resumeData && (
                     <>
                         <div className="text-center mb-8">
-                            <h1 className="text-2xl font-black text-gray-900 mb-1">{resumeData.title}</h1>
-                            <p className="text-gray-500 text-sm">Shared via ResuMate · Read-only</p>
+                            <h1 className="text-2xl font-black text-gray-900 dark:text-white mb-1">{resumeData.title}</h1>
+                            <p className="text-gray-500 dark:text-gray-400 text-sm">Shared via ResuMate · Read-only</p>
                         </div>
-                        <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
+                        <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100 dark:border-gray-800">
                             <RenderResume
                                 templateId={resumeData?.template?.theme || '01'}
                                 resumeData={resumeData}
@@ -79,7 +79,7 @@ const PublicResume = () => {
                             />
                         </div>
                         <div className="text-center mt-8">
-                            <p className="text-gray-400 text-sm mb-3">Want to build your own resume?</p>
+                            <p className="text-gray-400 dark:text-gray-500 text-sm mb-3">Want to build your own resume?</p>
                             <Link to="/" className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white font-bold rounded-2xl hover:scale-105 transition-all shadow-lg">
                                 <LayoutTemplate size={18} />
                                 Create your resume on ResuMate

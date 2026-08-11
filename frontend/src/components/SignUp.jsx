@@ -19,6 +19,7 @@ const SignUp = ({ setCurrentPage }) => {
         if (!fullName) { setError('Please enter Full Name'); return }
         if (!validateEmail(email)) { setError('Please enter a valid email address'); return }
         if (!password) { setError('Please enter password'); return }
+        if (password.length < 6) { setError('Password must be at least 6 characters'); return }
         setError('')
         try {
             const response = await axiosInstance.post(API_PATHS.AUTH.REGISTER, { name: fullName, email, password })
@@ -34,10 +35,10 @@ const SignUp = ({ setCurrentPage }) => {
     }
 
     return (
-        <div className="w-[90vw] md:w-[400px] p-8 bg-gradient-to-br from-white to-rose-50 rounded-3xl border border-rose-100 shadow-2xl overflow-hidden">
+        <div className="w-[90vw] md:w-[400px] p-8 bg-gradient-to-br from-white to-rose-50 dark:from-gray-900 dark:to-rose-950/20 rounded-3xl border border-rose-100 dark:border-rose-500/20 shadow-2xl overflow-hidden">
             <div className="text-center mb-8">
-                <h3 className="text-2xl font-black text-slate-900 mb-2">Create Account</h3>
-                <p className="text-slate-600 font-medium">Join thousands of professionals today</p>
+                <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-2">Create Account</h3>
+                <p className="text-slate-600 dark:text-gray-400 font-medium">Join thousands of professionals today</p>
             </div>
             <form onSubmit={handleSignUp} className="space-y-4">
                 <Input value={fullName} onChange={({ target }) => setFullName(target.value)}
@@ -47,18 +48,18 @@ const SignUp = ({ setCurrentPage }) => {
                 <Input value={password} onChange={({ target }) => setPassword(target.value)}
                     label="Password" placeholder="Min 6 characters" type="password" />
                 {error && (
-                    <div className="text-red-500 text-sm font-medium bg-red-50 border border-red-200 px-4 py-3 rounded-xl">
+                    <div className="text-red-500 text-sm font-medium bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 px-4 py-3 rounded-xl">
                         {error}
                     </div>
                 )}
                 <button type="submit"
-                    className="w-full py-4 bg-gradient-to-r from-rose-500 to-pink-600 text-white font-black rounded-2xl hover:scale-105 hover:shadow-xl hover:shadow-rose-200 transition-all text-lg">
+                    className="w-full py-4 bg-gradient-to-r from-rose-500 to-pink-600 text-white font-black rounded-2xl hover:scale-105 hover:shadow-xl hover:shadow-rose-200 dark:hover:shadow-none transition-all text-lg">
                     Create Account
                 </button>
-                <p className="text-center text-sm text-slate-600 font-medium">
+                <p className="text-center text-sm text-slate-600 dark:text-gray-400 font-medium">
                     Already have an account?{' '}
                     <button onClick={() => setCurrentPage('login')} type="button"
-                        className="font-black text-rose-600 hover:text-pink-600 transition-colors">
+                        className="font-black text-rose-600 dark:text-rose-400 hover:text-pink-600 transition-colors">
                         Sign In
                     </button>
                 </p>

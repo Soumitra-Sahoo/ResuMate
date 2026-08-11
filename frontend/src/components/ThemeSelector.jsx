@@ -11,10 +11,8 @@ const ThemeSelector = ({selectedTheme, setSelectedTheme, resumeData, onClose}) =
 
     const resumeRef = useRef(null)
     const [baseWidth, setBaseWidth] = useState(800)
-
-    //Seleted theme template using id
     const initialIndex = resumeTemplates.findIndex(t => t.id === selectedTheme)
-    const [selectedTemplate, setSeletedTemplate] = useState({
+    const [selectedTemplate, setSelectedTemplate] = useState({
         theme: selectedTheme || resumeTemplates[0]?.id || "",
         index: initialIndex >= 0? initialIndex : 0
     })
@@ -31,9 +29,7 @@ const ThemeSelector = ({selectedTheme, setSelectedTheme, resumeData, onClose}) =
 
  useEffect(()=> {
     updateBaseWidth()
-    // Add event listener for window resize
     window.addEventListener('resize', updateBaseWidth)
-    // Remove event listener on cleanup
     return () => {
         window.removeEventListener('resize', updateBaseWidth)
       }
@@ -42,7 +38,7 @@ const ThemeSelector = ({selectedTheme, setSelectedTheme, resumeData, onClose}) =
   return (
     <div className='max-w-7xl mx-auto px-4'>
         {/* header */}
-        <div className='flex items-center justify-between gap-4 bg-gradient-to-r from-white to-violet-50 border border-violet-100 rounded-2xl py-4 px-6 mb-6 shadow-sm'>
+        <div className='flex items-center justify-between gap-4 bg-gradient-to-r from-white to-violet-50 dark:from-gray-900 dark:to-violet-950/30 border border-violet-100 dark:border-violet-500/20 rounded-2xl py-4 px-6 mb-6 shadow-sm'>
         <Tabs tabs={TAB_DATA} activeTab={tabValue} setActiveTab={setTabValue} />
 
         <button className='w-full sm:w-auto flex items-center justify-center gap-3 px-6 py-3 bg-gradient-to-r 
@@ -52,14 +48,14 @@ const ThemeSelector = ({selectedTheme, setSelectedTheme, resumeData, onClose}) =
         </button>
         </div>
         <div className='grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-8'>
-        <div className='lg:col-span-2 bg-white rounded-2xl border border-gray-100 p-4 sm:p-6'>
+        <div className='lg:col-span-2 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4 sm:p-6'>
             <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-[60vh] lg:max-h-[70vh]
-            overflow-auto p-2'>
+            overflow-auto p-2 custom-scrollbar'>
                 {resumeTemplates.map((template,index) => (
                     <TemplateCard key={`templates_${index}`}
                     thumbnailImg={template.thumbnailImg}
                     isSelected={selectedTemplate.index === index}
-                    onSelect={()=> setSeletedTemplate ({
+                    onSelect={()=> setSelectedTemplate ({
                         theme: template.id,
                         index: index
                     })}
@@ -67,8 +63,7 @@ const ThemeSelector = ({selectedTheme, setSelectedTheme, resumeData, onClose}) =
                 ))}
             </div>
         </div>
-        {/* Right area */}
-        <div className='lg:col-span-3 bg-white rounded-2xl border border-gray-100 p-4 sm:p-6' ref={resumeRef}>
+        <div className='lg:col-span-3 bg-white rounded-2xl border border-gray-100 dark:border-gray-800 p-4 sm:p-6' ref={resumeRef}>
             <RenderResume templateId={selectedTemplate?.theme  || ""}
             resumeData={resumeData || DUMMY_RESUME_DATA}
             containerWidth={baseWidth}/>

@@ -3,6 +3,9 @@ import { Routes, Route } from 'react-router-dom'
 import LandingPage from './pages/LandingPage.jsx'
 import UserProvider from './context/UserContext.jsx'
 import Dashboard from './pages/Dashboard.jsx'
+import Templates from './pages/Templates.jsx'
+import AIAssistant from './pages/AIAssistant.jsx'
+import Settings from './pages/Settings.jsx'
 import EditResume from './components/EditResume.jsx'
 import PublicResume from './pages/PublicResume.jsx'
 import { Toaster } from 'react-hot-toast'
@@ -13,6 +16,9 @@ const App = () => {
       <Routes>
         <Route path='/' element={<LandingPage />} />
         <Route path='/dashboard' element={<Dashboard />} />
+        <Route path='/templates' element={<Templates />} />
+        <Route path='/ai-assistant' element={<AIAssistant />} />
+        <Route path='/settings' element={<Settings />} />
         <Route path='/resume/:resumeId' element={<EditResume />} />
         <Route path='/resume/view/:token' element={<PublicResume />} />
       </Routes>

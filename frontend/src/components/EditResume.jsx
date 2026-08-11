@@ -11,7 +11,7 @@ import { API_PATHS } from '../utils/apiPaths'
 import toast from 'react-hot-toast'
 import html2pdf from 'html2pdf.js'
 import html2canvas from 'html2canvas'
-import { dataURLtoFile } from '../utils/helper'
+import { dataURLtoFile, fixTailwindColors, calculateResumeCompletion } from '../utils/helper'
 import StepProgress from './StepProgress'
 import {
     ProfileInfoForm, ContactInfoForm, WorkExperienceForm,
@@ -24,15 +24,29 @@ import ThemeSelector from './ThemeSelector'
 
 const useResizeObserver = () => {
     const [size, setSize] = useState({ width: 0, height: 0 })
+    const observerRef = useRef(null)
+
     const ref = useCallback((node) => {
+        if (observerRef.current) {
+            observerRef.current.disconnect()
+            observerRef.current = null
+        }
         if (node) {
             const ro = new ResizeObserver((entries) => {
                 const { width, height } = entries[0].contentRect
                 setSize({ width, height })
             })
             ro.observe(node)
+            observerRef.current = ro
         }
     }, [])
+
+    useEffect(() => {
+        return () => {
+            observerRef.current?.disconnect()
+        }
+    }, [])
+
     return { ...size, ref }
 }
 
@@ -53,9 +67,10 @@ const ATSPanel = ({ resumeData, onClose }) => {
             }
         }
         fetch()
-    }, [resumeData, onClose])
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
-    const scoreColor = (s) => s >= 80 ? 'text-emerald-600' : s >= 60 ? 'text-amber-500' : 'text-red-500'
+    const scoreColor = (s) => s >= 80 ? 'text-emerald-600 dark:text-emerald-400' : s >= 60 ? 'text-amber-500 dark:text-amber-400' : 'text-red-500 dark:text-red-400'
     const barColor = (s) => s >= 80 ? 'bg-emerald-500' : s >= 60 ? 'bg-amber-400' : 'bg-red-400'
 
     return (
@@ -63,7 +78,7 @@ const ATSPanel = ({ resumeData, onClose }) => {
             {loading ? (
                 <div className="flex flex-col items-center py-12 gap-4">
                     <Loader2 size={36} className="animate-spin text-violet-600" />
-                    <p className="text-gray-600 font-medium">Analyzing your resume with AI...</p>
+                    <p className="text-gray-600 dark:text-gray-300 font-medium">Analyzing your resume with AI...</p>
                 </div>
             ) : result && (
                 <div className="space-y-6">
@@ -71,46 +86,46 @@ const ATSPanel = ({ resumeData, onClose }) => {
                     <div className="text-center">
                         <div className={`text-6xl font-black ${scoreColor(result.overallScore)}`}>
                             {result.overallScore}
-                            <span className="text-2xl text-gray-400">/100</span>
+                            <span className="text-2xl text-gray-400 dark:text-gray-500">/100</span>
                         </div>
-                        <p className="text-gray-500 mt-1 font-medium">ATS Compatibility Score</p>
+                        <p className="text-gray-500 dark:text-gray-400 mt-1 font-medium">ATS Compatibility Score</p>
                     </div>
 
                     {/* Section scores */}
                     <div className="space-y-3">
-                        <h3 className="font-bold text-gray-800">Section Breakdown</h3>
+                        <h3 className="font-bold text-gray-800 dark:text-gray-100">Section Breakdown</h3>
                         {Object.entries(result.sections || {}).map(([key, val]) => (
                             <div key={key}>
                                 <div className="flex justify-between text-sm mb-1">
-                                    <span className="font-medium text-gray-700 capitalize">
+                                    <span className="font-medium text-gray-700 dark:text-gray-300 capitalize">
                                         {key.replace(/([A-Z])/g, ' $1')}
                                     </span>
                                     <span className={`font-bold ${scoreColor(val.score)}`}>{val.score}%</span>
                                 </div>
-                                <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                                <div className="w-full h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
                                     <div className={`h-full rounded-full ${barColor(val.score)}`}
                                         style={{ width: `${val.score}%` }} />
                                 </div>
-                                {val.tip && <p className="text-xs text-gray-500 mt-1">💡 {val.tip}</p>}
+                                {val.tip && <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">💡 {val.tip}</p>}
                             </div>
                         ))}
                     </div>
 
                     {/* Issues & Strengths */}
                     <div className="grid grid-cols-2 gap-4">
-                        <div className="bg-red-50 border border-red-100 rounded-2xl p-4">
-                            <h4 className="font-bold text-red-700 mb-2 text-sm">⚠ Top Issues</h4>
+                        <div className="bg-red-50 dark:bg-red-500/10 border border-red-100 dark:border-red-500/20 rounded-2xl p-4">
+                            <h4 className="font-bold text-red-700 dark:text-red-400 mb-2 text-sm">⚠ Top Issues</h4>
                             <ul className="space-y-1">
                                 {result.topIssues?.map((issue, i) => (
-                                    <li key={i} className="text-xs text-red-600">• {issue}</li>
+                                    <li key={i} className="text-xs text-red-600 dark:text-red-400">• {issue}</li>
                                 ))}
                             </ul>
                         </div>
-                        <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-4">
-                            <h4 className="font-bold text-emerald-700 mb-2 text-sm">✓ Strengths</h4>
+                        <div className="bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20 rounded-2xl p-4">
+                            <h4 className="font-bold text-emerald-700 dark:text-emerald-400 mb-2 text-sm">✓ Strengths</h4>
                             <ul className="space-y-1">
                                 {result.topStrengths?.map((s, i) => (
-                                    <li key={i} className="text-xs text-emerald-600">• {s}</li>
+                                    <li key={i} className="text-xs text-emerald-600 dark:text-emerald-400">• {s}</li>
                                 ))}
                             </ul>
                         </div>
@@ -118,18 +133,18 @@ const ATSPanel = ({ resumeData, onClose }) => {
 
                     {/* Keywords */}
                     <div>
-                        <h4 className="font-bold text-gray-800 mb-2 text-sm">Keywords Found</h4>
+                        <h4 className="font-bold text-gray-800 dark:text-gray-100 mb-2 text-sm">Keywords Found</h4>
                         <div className="flex flex-wrap gap-2">
                             {result.keywordsFound?.map((k, i) => (
-                                <span key={i} className="px-2 py-1 bg-violet-100 text-violet-700 text-xs rounded-full font-medium">{k}</span>
+                                <span key={i} className="px-2 py-1 bg-violet-100 dark:bg-violet-500/10 text-violet-700 dark:text-violet-300 text-xs rounded-full font-medium">{k}</span>
                             ))}
                         </div>
                     </div>
                     <div>
-                        <h4 className="font-bold text-gray-800 mb-2 text-sm">Keywords to Add</h4>
+                        <h4 className="font-bold text-gray-800 dark:text-gray-100 mb-2 text-sm">Keywords to Add</h4>
                         <div className="flex flex-wrap gap-2">
                             {result.keywordsMissing?.map((k, i) => (
-                                <span key={i} className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full font-medium">{k}</span>
+                                <span key={i} className="px-2 py-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs rounded-full font-medium">{k}</span>
                             ))}
                         </div>
                     </div>
@@ -142,10 +157,10 @@ const ATSPanel = ({ resumeData, onClose }) => {
 const SaveIndicator = ({ status }) => {
     if (status === 'idle') return null
     return (
-        <div className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-xl bg-gray-50 border border-gray-200">
-            {status === 'saving' && <><Loader2 size={12} className="animate-spin text-violet-500" /><span className="text-gray-500">Saving...</span></>}
-            {status === 'saved' && <><Check size={12} className="text-emerald-500" /><span className="text-emerald-600">Saved</span></>}
-            {status === 'error' && <><AlertCircle size={12} className="text-red-500" /><span className="text-red-500">Save failed</span></>}
+        <div className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+            {status === 'saving' && <><Loader2 size={12} className="animate-spin text-violet-500" /><span className="text-gray-500 dark:text-gray-400">Saving...</span></>}
+            {status === 'saved' && <><Check size={12} className="text-emerald-500" /><span className="text-emerald-600 dark:text-emerald-400">Saved</span></>}
+            {status === 'error' && <><AlertCircle size={12} className="text-red-500" /><span className="text-red-500 dark:text-red-400">Save failed</span></>}
         </div>
     )
 }
@@ -176,7 +191,7 @@ const EditResume = () => {
         title: 'Professional Resume',
         thumbnailLink: '',
         profileInfo: { fullName: '', designation: '', summary: '' },
-        template: { theme: 'modern', colorPalette: [] },
+        template: { theme: '01' },
         contactInfo: { email: '', phone: '', location: '', linkedin: '', github: '', website: '' },
         workExperience: [{ company: '', role: '', startDate: '', endDate: '', description: '' }],
         education: [{ degree: '', institution: '', startDate: '', endDate: '' }],
@@ -188,38 +203,7 @@ const EditResume = () => {
     })
 
     const calculateCompletion = useCallback(() => {
-        let done = 0, total = 0
-        total += 3
-        if (resumeData.profileInfo.fullName) done++
-        if (resumeData.profileInfo.designation) done++
-        if (resumeData.profileInfo.summary) done++
-        total += 2
-        if (resumeData.contactInfo.email) done++
-        if (resumeData.contactInfo.phone) done++
-        resumeData.workExperience.forEach(e => {
-            total += 5
-            if (e.company) done++; if (e.role) done++
-            if (e.startDate) done++; if (e.endDate) done++; if (e.description) done++
-        })
-        resumeData.education.forEach(e => {
-            total += 4
-            if (e.degree) done++; if (e.institution) done++
-            if (e.startDate) done++; if (e.endDate) done++
-        })
-        resumeData.skills.forEach(s => {
-             total += 1;
-             if (s.name) done++;
-        })
-        resumeData.projects.forEach(p => {
-            total += 4
-            if (p.title) done++; if (p.description) done++
-            if (p.github) done++; if (p.liveDemo) done++
-        })
-        resumeData.certifications.forEach(c => { total += 3; if (c.title) done++; if (c.issuer) done++; if (c.year) done++ })
-        resumeData.languages?.forEach(l => { total += 1; if (l.name) done++ })
-        total += resumeData.interests.length
-        done += resumeData.interests.filter(i => i.trim() !== '').length
-        const pct = Math.round((done / total) * 100)
+        const pct = calculateResumeCompletion(resumeData)
         setCompletionPercentage(pct)
         return pct
     }, [resumeData])
@@ -367,51 +351,16 @@ const EditResume = () => {
         try {
             const thumbnailElement = thumbnailRef.current
             if (thumbnailElement) {
-                const styleOverride = document.createElement('style')
-                styleOverride.id = '__oklch_fix__'
-                styleOverride.textContent = `
-                    * {
-                        color: #000000 !important;
-                        border-color: #e5e7eb !important;
-                        outline-color: #e5e7eb !important;
-                    }
-                    [style*="oklch"] {
-                        color: #000000 !important;
-                        background-color: #ffffff !important;
-                        border-color: #e5e7eb !important;
-                    }
-                `
-                document.head.appendChild(styleOverride)
-                await new Promise(r => setTimeout(r, 100))
-
                 const canvas = await html2canvas(thumbnailElement, {
                     scale: 0.5,
                     backgroundColor: '#FFFFFF',
                     logging: false,
                     useCORS: true,
                     allowTaint: false,
-                    onclone: (clonedDoc) => {
-                        const allEls = clonedDoc.querySelectorAll('*')
-                        allEls.forEach((el) => {
-                            const cs = window.getComputedStyle(el)
-                            ;['color','backgroundColor','borderColor',
-                              'borderTopColor','borderRightColor',
-                              'borderBottomColor','borderLeftColor'].forEach((prop) => {
-                                const val = cs[prop]
-                                if (val && val.includes('oklch')) {
-                                    el.style[prop] = prop === 'backgroundColor'
-                                        ? '#ffffff' : '#000000'
-                                }
-                            })
-                            // Strip oklch from inline styles
-                            if (el.style?.cssText?.includes('oklch')) {
-                                el.style.cssText = el.style.cssText
-                                    .replace(/oklch\([^)]+\)/g, '#000000')
-                            }
-                        })
+                    onclone: (clonedDoc, clonedElement) => {
+                        fixTailwindColors(clonedElement)
                     }
                 })
-                document.getElementById('__oklch_fix__')?.remove()
 
                 const dataUrl = canvas.toDataURL('image/png')
                 const file = dataURLtoFile(dataUrl, `thumbnail-${resumeId}.png`)
@@ -431,9 +380,7 @@ const EditResume = () => {
                 }
             }
         } catch (thumbError) {
-            // Thumbnail failed — not critical, resume data already saved
             console.warn('Thumbnail generation failed (non-critical):', thumbError.message)
-            document.getElementById('__oklch_fix__')?.remove()
         }
 
         toast.success('Resume saved successfully!')
@@ -466,16 +413,20 @@ const EditResume = () => {
         setIsDownloading(true)
         setDownloadSuccess(false)
         const toastId = toast.loading('Generating PDF…')
-        const override = document.createElement('style')
-        override.id = '__pdf_override__'
-        override.textContent = '* { color: #000 !important; background-color: #fff !important; border-color: #000 !important; }'
-        document.head.appendChild(override)
         try {
             await html2pdf().set({
                 margin: 0,
                 filename: `${resumeData.title.replace(/[^a-z0-9]/gi, '_')}.pdf`,
                 image: { type: 'png', quality: 1.0 },
-                html2canvas: { scale: 2, useCORS: true, backgroundColor: '#FFFFFF', logging: false },
+                html2canvas: {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: '#FFFFFF',
+                    logging: false,
+                    onclone: (clonedDoc, clonedElement) => {
+                        fixTailwindColors(clonedElement)
+                    },
+                },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
                 pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
             }).from(element).save()
@@ -485,14 +436,13 @@ const EditResume = () => {
         } catch (err) {
             toast.error(`Failed: ${err.message}`, { id: toastId })
         } finally {
-            document.getElementById('__pdf_override__')?.remove()
             setIsDownloading(false)
         }
     }
 
     const updateTheme = (theme) => {
         setHasUnsavedChanges(true)
-        setResumeData(prev => ({ ...prev, template: { theme, colorPalette: [] } }))
+        setResumeData(prev => ({ ...prev, template: { theme } }))
     }
 
     const renderForm = () => {
@@ -561,7 +511,7 @@ const EditResume = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
 
                 {/* Header */}
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-gradient-to-r from-white to-violet-50 border border-violet-100 rounded-2xl py-4 px-6 mb-6 shadow-sm">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-gradient-to-r from-white to-violet-50 dark:from-gray-900 dark:to-violet-950/20 border border-violet-100 dark:border-gray-800 rounded-2xl py-4 px-6 mb-6 shadow-sm">
                     <div className="flex items-center gap-3">
                         <TitleInput
                             title={resumeData.title}
@@ -573,16 +523,16 @@ const EditResume = () => {
                         <SaveIndicator status={saveStatus} />
                     </div>
                     <div className="flex flex-wrap items-center gap-3">
-                        <button onClick={() => setOpenATSModal(true)} className="flex items-center gap-2 px-4 py-2 bg-amber-100 text-amber-700 font-bold rounded-xl hover:bg-amber-200 transition-all">
+                        <button onClick={() => setOpenATSModal(true)} className="flex items-center gap-2 px-4 py-2 bg-amber-100 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 font-bold rounded-xl hover:bg-amber-200 dark:hover:bg-amber-500/20 transition-all">
                             <BarChart2 size={16} /><span className="text-sm">ATS Score</span>
                         </button>
-                        <button onClick={() => setOpenThemeSelector(true)} className="flex items-center gap-2 px-4 py-2 bg-violet-100 text-violet-700 font-bold rounded-xl hover:bg-violet-200 transition-all">
+                        <button onClick={() => setOpenThemeSelector(true)} className="flex items-center gap-2 px-4 py-2 bg-violet-100 dark:bg-violet-500/10 text-violet-700 dark:text-violet-400 font-bold rounded-xl hover:bg-violet-200 dark:hover:bg-violet-500/20 transition-all">
                             <Palette size={16} /><span className="text-sm">Theme</span>
                         </button>
-                        <button onClick={handleDeleteResume} disabled={isLoading} className="flex items-center gap-2 px-4 py-2 bg-red-100 text-red-700 font-bold rounded-xl hover:bg-red-200 transition-all">
+                        <button onClick={handleDeleteResume} disabled={isLoading} className="flex items-center gap-2 px-4 py-2 bg-red-100 dark:bg-red-500/10 text-red-700 dark:text-red-400 font-bold rounded-xl hover:bg-red-200 dark:hover:bg-red-500/20 transition-all">
                             <Trash2 size={16} /><span className="text-sm">Delete</span>
                         </button>
-                        <button onClick={() => setOpenPreviewModal(true)} className="flex items-center gap-2 px-4 py-2 bg-emerald-100 text-emerald-700 font-bold rounded-xl hover:bg-emerald-200 transition-all">
+                        <button onClick={() => setOpenPreviewModal(true)} className="flex items-center gap-2 px-4 py-2 bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 font-bold rounded-xl hover:bg-emerald-200 dark:hover:bg-emerald-500/20 transition-all">
                             <Download size={16} /><span className="text-sm">Download</span>
                         </button>
                     </div>
@@ -592,20 +542,20 @@ const EditResume = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
 
                     {/* Form Side */}
-                    <div className="bg-white border border-violet-100 rounded-2xl overflow-hidden shadow-sm">
+                    <div className="bg-white dark:bg-gray-900 border border-violet-100 dark:border-gray-800 rounded-2xl overflow-hidden shadow-sm">
                         <StepProgress progress={progress} />
                         {renderForm()}
                         <div className="p-4 sm:p-6">
                             {errorMsg && (
-                                <div className="flex items-center gap-3 text-sm font-medium text-amber-700 bg-amber-50 border border-amber-200 px-4 py-3 rounded-xl mb-4">
+                                <div className="flex items-center gap-3 text-sm font-medium text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 px-4 py-3 rounded-xl mb-4">
                                     <AlertCircle size={16} />{errorMsg}
                                 </div>
                             )}
                             <div className="flex flex-wrap items-center justify-end gap-3">
-                                <button className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 font-bold rounded-xl hover:bg-gray-200 transition-all text-sm" onClick={goBack} disabled={isLoading}>
+                                <button className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 font-bold rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700 transition-all text-sm" onClick={goBack} disabled={isLoading}>
                                     <ArrowLeft size={16} /> Back
                                 </button>
-                                <button className="flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-700 font-bold rounded-xl hover:bg-blue-200 transition-all text-sm" onClick={uploadResumeImages} disabled={isLoading}>
+                                <button className="flex items-center gap-2 px-4 py-2 bg-blue-100 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 font-bold rounded-xl hover:bg-blue-200 dark:hover:bg-blue-500/20 transition-all text-sm" onClick={uploadResumeImages} disabled={isLoading}>
                                     {isLoading ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
                                     {isLoading ? 'Saving...' : 'Save & Exit'}
                                 </button>
@@ -619,14 +569,16 @@ const EditResume = () => {
 
                     {/* Preview Side */}
                     <div className="hidden lg:block">
-                        <div className="bg-white border border-violet-100 rounded-2xl overflow-hidden shadow-sm p-4">
+                        <div className="bg-white dark:bg-gray-900 border border-violet-100 dark:border-gray-800 rounded-2xl overflow-hidden shadow-sm p-4">
                             <div className="text-center mb-4">
-                                <div className="inline-flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-full text-sm font-medium text-gray-700">
+                                <div className="inline-flex items-center gap-2 bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-full text-sm font-medium text-gray-700 dark:text-gray-200">
                                     <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                                     Live Preview — {completionPercentage}% Complete
                                 </div>
                             </div>
-                            <div ref={previewContainerRef} className="w-full">
+                            {/* Intentionally forced white — this is the actual
+                                resume "paper", not app chrome. */}
+                            <div ref={previewContainerRef} className="w-full bg-white rounded-xl overflow-hidden">
                                 <RenderResume
                                     key={`preview-${resumeData?.template?.theme}`}
                                     templateId={resumeData?.template?.theme || ''}
@@ -660,7 +612,7 @@ const EditResume = () => {
             >
                 <div className="relative">
                     <div className="text-center mb-4">
-                        <div className="inline-flex items-center gap-2 bg-violet-100 px-3 py-1 rounded-full text-sm font-medium text-violet-700">
+                        <div className="inline-flex items-center gap-2 bg-violet-100 dark:bg-violet-500/10 px-3 py-1 rounded-full text-sm font-medium text-violet-700 dark:text-violet-300">
                             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                             Completion: {completionPercentage}%
                         </div>
@@ -683,8 +635,8 @@ const EditResume = () => {
                 <ATSPanel resumeData={resumeData} onClose={() => setOpenATSModal(false)} />
             </Modal>
 
-            {/* Hidden thumbnail */}
-            <div style={{ display: 'none' }} ref={thumbnailRef}>
+            {/* Hidden thumbnail — off-screen, forced white (see Phase 1) */}
+            <div style={{ position: 'absolute', top: '-9999px', left: 0, opacity: 0, pointerEvents: 'none' }} ref={thumbnailRef}>
                 <div className="bg-white max-w-[400px] mx-auto">
                     <RenderResume
                         key={`thumb-${resumeData?.template?.theme}`}
