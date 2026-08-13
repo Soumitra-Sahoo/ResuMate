@@ -21,7 +21,6 @@ export const uploadResumeImages = (req, res) => {
             }
 
             const uploadsFolder = path.join(process.cwd(), 'uploads')
-            const baseUrl = `${req.protocol}://${req.get('host')}`
 
             const newThumbnail = req.files?.thumbnail?.[0]
             const newProfileImage = req.files?.profileImage?.[0]
@@ -31,7 +30,7 @@ export const uploadResumeImages = (req, res) => {
                     const oldPath = path.join(uploadsFolder, path.basename(resume.thumbnailLink))
                     if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath)
                 }
-                resume.thumbnailLink = `${baseUrl}/uploads/${newThumbnail.filename}`
+                resume.thumbnailLink = `/uploads/${newThumbnail.filename}`
             }
 
             if (newProfileImage) {
@@ -39,7 +38,7 @@ export const uploadResumeImages = (req, res) => {
                     const oldPath = path.join(uploadsFolder, path.basename(resume.profileInfo.profilePreviewUrl))
                     if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath)
                 }
-                resume.profileInfo.profilePreviewUrl = `${baseUrl}/uploads/${newProfileImage.filename}`
+                resume.profileInfo.profilePreviewUrl = `/uploads/${newProfileImage.filename}`
             }
 
             await resume.save()
