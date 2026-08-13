@@ -85,9 +85,7 @@ export const uploadUserImage = (req, res) => {
         if (!req.file) {
             return res.status(400).json({ message: 'No image file provided' })
         }
-        const baseUrl = `${req.protocol}://${req.get('host')}`
-        const imageUrl = `${baseUrl}/uploads/${req.file.filename}`
-        res.status(200).json({ imageUrl })
+        res.status(200).json({ imageUrl: `/uploads/${req.file.filename}` })
     })
 }
 

@@ -2,6 +2,7 @@ import { useContext, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { UserContext } from "../context/UserContext"
 import { Award, Check, Clock, Edit, Trash2, TrendingUp, Zap, FileText } from "lucide-react"
+import { resolveAssetUrl } from "../utils/apiPaths"
 
 // ─── ProfileInfoCard ───────────────────────────────────────────────────────────
 export const ProfileInfoCard = () => {
@@ -110,7 +111,7 @@ export const ResumeSummaryCard = ({
             <div className={`relative flex-1 overflow-hidden ${showRealThumbnail ? 'bg-gray-100 dark:bg-gray-950' : `p-4 sm:p-6 bg-gradient-to-br ${designColor}`}`}>
                 {showRealThumbnail ? (
                     <img
-                        src={thumbnailLink}
+                        src={resolveAssetUrl(thumbnailLink)}
                         alt={`${title} preview`}
                         className="w-full h-full object-cover object-top"
                         onError={() => setThumbFailed(true)}

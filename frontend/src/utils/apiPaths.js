@@ -1,5 +1,11 @@
 export const BASE_URL =
   import.meta.env.VITE_API_BASE_URL || 'https://resumate-jet-rho.vercel.app'
+  
+export const resolveAssetUrl = (path) => {
+  if (!path) return path
+  if (/^https?:\/\//i.test(path)) return path
+  return `${BASE_URL}${path.startsWith('/') ? '' : '/'}${path}`
+}
 
 export const API_PATHS = {
     AUTH: {
